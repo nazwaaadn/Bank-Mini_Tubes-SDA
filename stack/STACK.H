@@ -1,41 +1,24 @@
-/* File        : stack.h */
-/* Deskripsi   : Deklarasi stack yang diimplementasikan dgn using ADT linked */
-/*		 	  Top adalah alamat elemen puncak */
-/* Dibuat oleh : Ade Chandra Nugraha*/
-
 #ifndef STACK_H
 #define STACK_H
 #include "BOOLEAN.h"
-#include "linked.h"
+#include "tiket.h"
+#include "time.h"
 #define Nil NULL
 
-typedef List Stack;
-/**** Perubahan nilai komponen struktur ****/
+typedef struct NodeStack {
+    NodeTiket* tiket;           // Tiket yang disimpan di stack
+    struct NodeStack* next;
+} NodeStack;
+
+typedef struct {
+    NodeStack* top;
+} Stack;
+
 void SetTop (Stack *S, Stack NewTop );
-/* Memberi Nilai Top yang baru dengan NewTop */
-
-/*    PROTO TYPE    */
-/**** Konstruktor/Kreator ****/
 void CreateEmpty (Stack *S);
-/* IS : S sembarang */
-/* FS : Membuat sebuah stack S yang kosong */
-/* Ciri stack kosong : Top bernilai NULL */
-
-/**** Predikat untuk test keadaan KOLEKSI ****/
 boolean IsEmpty (Stack S);
-/* Mengirim true jika Stack Kosong */
-
-/**** Menambahkan sebuah elemen ke Stack ****/
-void Push (Stack *S, infotype X);
-/* Menambahkan X sebagai elemen stack S */
-/* IS : S mungkin kosong */
-/* FS : X menjadi Top yang baru */
-
-/**** Menghapus sebuah elemen Stack ****/
-void Pop (Stack *S, infotype *X);
-/* Menghapus X dari Stack S */
-/* IS : S tidak mungkin kosong */
-/* FS : X adalah nilai elemen Top yang lama, Top berkurang 1 */
+void Push (Stack *S, NodeTiket* X);
+void Pop (Stack *S, NodeTiket** X);
 
 #endif
 
