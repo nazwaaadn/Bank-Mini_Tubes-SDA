@@ -31,7 +31,7 @@ boolean is_Full(Queue Q) {
     return count == 10; // Jika elemen sudah mencapai 10, return true
 }
 
-void EnQueue(Queue *Q, infotype X) {
+void EnQueue(Queue *Q, DataBus X) {
     address P;
     P = Alokasi(X);
     if(!is_Full(*Q)) {
@@ -45,7 +45,7 @@ void EnQueue(Queue *Q, infotype X) {
 }
 
 /* Menghapus elemen dari depan queue */
-void deQueue(Queue *Q, infotype *X) {
+void deQueue(Queue *Q, DataBus *X) {
     if (is_Empty(*Q)) {
         printf("Queue kosong\n");
         return;
