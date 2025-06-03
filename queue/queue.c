@@ -3,24 +3,24 @@
 
 #include "queue.h"
 #include <stdio.h>
-#include "linked.h"
+#include "bus.h"
 
 /*Membuat sebuah queue baru dengan First dan Rear NULL*/
 void CreateQueue (Queue *Q)
 {
-	First(*Q) = Nil;
+	Front(*Q) = Nil;
     Rear(*Q) = Nil;
 }
 
 /*Memeriksa apakah queue kosong */
 boolean is_Empty (Queue Q)
 {
-	 return (First(Q) == Nil && Rear(Q) == Nil);
+	 return (Front(Q) == Nil && Rear(Q) == Nil);
 }
 
 /*Memeriksa apakah queue penuh */
 boolean is_Full(Queue Q) {
-    address P = First(Q);
+    NodeBus* P = Front(Q);
     int count = 0;
 
     while (P != Nil && count < NBElement) {
@@ -32,11 +32,11 @@ boolean is_Full(Queue Q) {
 }
 
 void EnQueue(Queue *Q, DataBus X) {
-    address P;
+    NodeBus *P;
     P = Alokasi(X);
     if(!is_Full(*Q)) {
             if (is_Empty(*Q)) {
-                First(*Q) = P;
+                Front(*Q) = P;
                 Rear(*Q) = P;
             } else {
                 InsertLast(Q, P);   
@@ -51,7 +51,7 @@ void deQueue(Queue *Q, DataBus *X) {
         return;
     }
 
-    address P;
+    NodeBus *P;
     DelFirst(Q, &P);  // Memanggil prosedur DelFirst
     *X = Info(P); 
     DeAlokasi(P);

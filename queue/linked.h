@@ -5,8 +5,6 @@
 #include <time.h>
 #include "bus.h"
 #define Nil NULL
-#define Info(P) (P)->info
-#define Next(P) (P)->Next
 #define First(L) (L).First
 
 boolean ListEmpty(NodeBus *L);
