@@ -24,6 +24,7 @@ typedef struct NodeUser {
 } NodeUser;
 
 extern NodeUser *HeadUser;
+extern NodeUser *currentUser;
 
 
 void Register();
@@ -38,6 +39,5 @@ void deleteTransaksi(NodeUser* user, NodeTiket* tiket);
 void loadUsersFromFile(const char* filename);
 void saveUsersToFile(const char* filename);
 int isUsernameTaken(const char* nama);
-void printAllUsers();
 
 #endif
