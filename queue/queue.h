@@ -1,16 +1,18 @@
-#ifndef queue_H 
-#define queue_H
+#ifndef QUEUE_H
+#define QUEUE_H
 
 #include "boolean.h"
-#include "list1.h"  
+#include "list1.h"
+#include "bus.h"
+#define Front(Q) (Q).Front
+#define Rear(Q) (Q).Rear
 
-#define NBElement 10  
+#define NBElement 10  // hanya relevan jika kamu pakai queue array
 
 typedef struct {
     NodeBus* Front;
+    NodeBus* Rear;
 } Queue;
-
-typedef Queue QueueArray[NBElement];
 
 void CreateQueue(Queue *Q);
 boolean is_Empty(Queue Q);
