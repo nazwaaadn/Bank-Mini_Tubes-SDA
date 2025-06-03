@@ -24,19 +24,19 @@ typedef struct NodeUser {
 
 extern NodeUser *HeadUser;
 
-//admin
 
-typedef struct
-{
-    char nama[50]; 
-    char password[20];            
-} DataAdmin;
-
+void Register();
+void Login();
 void insertUser(DataUser userBaru);
 void loginUser(char nama[], char password[]);
-void loginAdmin(char nama[], char password[]);
 void logoutUser();
-void logoutAdmin();
 void deleteTransaksi(NodeUser* user, NodeTiket* tiket);
+
+// tambahan
+//
+void loadUsersFromFile(const char* filename);
+void saveUsersToFile(const char* filename);
+int isUsernameTaken(const char* nama);
+void printAllUsers();
 
 #endif
