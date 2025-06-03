@@ -23,6 +23,7 @@ typedef struct NodeUser {
 } NodeUser;
 
 extern NodeUser *HeadUser;
+extern NodeUser* currentUser;
 
 
 void Register();
@@ -30,13 +31,11 @@ void Login();
 void insertUser(DataUser userBaru);
 void loginUser(char nama[], char password[]);
 void logoutUser();
-void deleteTransaksi(NodeUser* user, NodeTiket* tiket);
+// void deleteTransaksi(NodeUser* user, NodeTiket* tiket);
 
 // tambahan
 //
 void loadUsersFromFile(const char* filename);
-void saveUsersToFile(const char* filename);
 int isUsernameTaken(const char* nama);
-void printAllUsers();
 
 #endif
