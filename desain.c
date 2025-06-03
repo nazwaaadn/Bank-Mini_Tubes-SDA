@@ -4,24 +4,21 @@
 void SplashScreen(){
     printf("======================================================\n");
     printf("||                                                  ||\n");
-    printf("||           SISTEM RUTE BUS TRANSJAKARTA           ||\n");
+    printf("||           SISTEM RUTE BUS TRANSBANDUNG           ||\n");
     printf("||                                                  ||\n");
-    printf("||              ┌────────────────────┐              ||\n");
-    printf("||              │   [   T-Jakarta   ]│              ||\n");
-    printf("||              └────────────────────┘              ||\n");
+    printf("||                    TRANSLIBE                     ||\n");
     printf("||                                                  ||\n");
     printf("||            Pencarian & Manajemen Rute            ||\n");
     printf("||                                                  ||\n");
     printf("||             Dibuat oleh: Translibe               ||\n");
     printf("||                                                  ||\n");
-    printf("||==================================================||\n");
+    printf("||                                                  ||\n");
     printf("||                  Masuk sebagai...                ||\n");
-    printf("||--------------------------------------------------||\n");
+    printf("||                                                  ||\n");
     printf("||                     1. User                      ||\n");
     printf("||                     2. Admin                     ||\n");
     printf("||                     3. Keluar                    ||\n");
-    printf("||==================================================||\n");
-    printf("||         Masukkan Pilihan Anda [Input User]       ||\n");
+    printf("||                                                  ||\n");
     printf("======================================================\n");
 }
 

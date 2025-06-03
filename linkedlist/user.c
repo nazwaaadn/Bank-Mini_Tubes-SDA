@@ -3,9 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char* USER_DB_FILENAME = "user_database.txt";
+const char* FileUser = "linkedlist/userDatabase.txt";
+
 
 NodeUser *HeadUser = NULL;
+NodeUser* currentUser = NULL;
+
 
 void insertUser(DataUser userBaru) {
     NodeUser* newNode = (NodeUser*)malloc(sizeof(NodeUser));
@@ -64,7 +67,7 @@ void Register() {
 
         insertUser(userBaru);
 
-        FILE* file = fopen(USER_DB_FILENAME, "a");
+        FILE* file = fopen(FileUser, "a");
         if (file != NULL) {
             fprintf(file, "%s;%s;%s;%s\n", userBaru.nama, userBaru.password, userBaru.alamat, userBaru.noHP);
             fclose(file);
@@ -103,27 +106,35 @@ void Login() {
     }
 
 
-void loadUsersFromFile(const char* filename) {
-    FILE* file = fopen(filename, "r");
-        if (file == NULL) {
-            printf("Gagal membuka file %s\n", filename);
-            return;
+void loadUsersFromFile(const char* FileUser) {
+    FILE* file = fopen(FileUser, "r");
+    if (file == NULL) {
+        // Jika file tidak ada, buat file kosong agar tidak error di masa depan
+        file = fopen(FileUser, "w");
+        if (file != NULL) {
+            fclose(file);
+            printf("File %s dibuat karena belum ada.\n", FileUser);
+        } else {
+            printf("Gagal membuat file %s\n", FileUser);
         }
-
-        char buffer[256];
-        while (fgets(buffer, sizeof(buffer), file) != NULL) {
-            DataUser userBaru;
-            if (sscanf(buffer, "%[^;];%[^;];%[^;];%[^\n]",
-                    userBaru.nama,
-                    userBaru.password,
-                    userBaru.alamat,
-                    userBaru.noHP) == 4) {
-                insertUser(userBaru);
-            }
-        }
-
-        fclose(file);
+        return;
     }
+
+    char buffer[256];
+    while (fgets(buffer, sizeof(buffer), file) != NULL) {
+        DataUser userBaru;
+        if (sscanf(buffer, "%[^;];%[^;];%[^;];%[^\n]",
+                userBaru.nama,
+                userBaru.password,
+                userBaru.alamat,
+                userBaru.noHP) == 4) {
+            insertUser(userBaru);
+        }
+    }
+
+    fclose(file);
+}
+
 
 
 void logoutUser() {
