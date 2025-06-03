@@ -6,6 +6,7 @@
 #include <malloc.h>
 #include "STACK.h"
 #include "linked.h"
+#include "queue.h"
 
 /**** Perubahan nilai komponen struktur ****/
 void SetFirst (Stack *S, Stack NewFirst )

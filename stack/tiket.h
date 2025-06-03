@@ -1,36 +1,47 @@
 #ifndef tiket_H
 #define tiket_H
+
 #include "BOOLEAN.h"
 #include <stdio.h>
 #include <time.h>
+
 #define Nil NULL
 #define Info(P) (P)->Info
 #define Next(P) (P)->next
 
-//tiket
-typedef struct
-{
-    char idTiket[10];         
-    char namaPenumpang[50];   
-    char tujuan[50];          
-    int jumlahKursi;          
-    int totalHarga;           
-    char status[15]; 
+// Struktur Tiket
+typedef struct {
+    char idTiket[10];          // ID unik tiket
+    char namaPenumpang[50];    // Nama pemilik akun
+    char tujuan[50];           // Tujuan perjalanan
+    char jadwal[20];           // Waktu/jam keberangkatan
+    int noKursi;               // Nomor kursi
+    int jumlahKursi;           // Jumlah kursi (jika group)
+    int totalHarga;            // Total harga tiket
+    char status[15];           // Status tiket ("confirmed", "cancelled", etc)
 } DataTiket;
 
+// Forward declaration of NodeBus (karena didefinisikan di tempat lain)
+struct NodeBus;
+
 typedef struct NodeTiket {
-    DataTiket Info;               
-    struct NodeBus* bus;      
+    DataTiket Info;
+    struct NodeBus* bus;         // Pointer ke data bus terkait
+    struct NodeTiket* next;
 } NodeTiket;
 
+// Global pointer head
 extern NodeTiket *HeadTiket;
 
-int isTiketListEmpty();
-void insertTiket(DataTiket tiketBaru, NodeBus* bus);
-void editTiketByID(char idTiket[], DataTiket tiketBaru);
-void printAllTiket();
-NodeTiket* searchTiketByID(char idTiket[]);
-int deleteTiketByID(char idTiket[]);
-void deleteAllTiket();
+// Fungsi-fungsi Tiket
+int isTiketListEmpty();                                               // Mengecek apakah daftar tiket kosong
+void insertTiket(DataTiket tiketBaru, struct NodeBus* bus);          // Menambahkan tiket baru
+void editTiketByID(char idTiket[], DataTiket tiketBaru);             // Mengedit tiket berdasarkan ID
+void printAllTiket();                                                // Menampilkan semua tiket
+NodeTiket* searchTiketByID(char idTiket[]);                          // Mencari tiket berdasarkan ID
+int deleteTiketByID(char idTiket[]);                                 // Menghapus tiket berdasarkan ID
+void deleteAllTiket();                                               // Menghapus semua tiket
+void cetakTiket(char idTiket[]);                                     // Mencetak (menampilkan) detail tiket
+void batalkanTiket(char idTiket[]);                                  // Mengubah status tiket jadi "cancelled" & mengembalikan kursi
 
 #endif

@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include "user.h"
+#include "tiket.h"
+#include "bus.h"
 
 int main() {
     SplashScreen();

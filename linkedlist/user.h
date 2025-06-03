@@ -1,8 +1,9 @@
-#ifndef tiket_H
-#define tiket_H
+#ifndef user_H
+#define user_H
 #include "BOOLEAN.h"
 #include <stdio.h>
 #include <time.h>
+#include "tiket.h"
 #define Nil NULL
 #define Info(P) (P)->Info
 #define Next(P) (P)->next

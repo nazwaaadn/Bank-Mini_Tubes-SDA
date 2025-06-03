@@ -1,5 +1,5 @@
-#ifndef list1_H
-#define list1_H
+#ifndef linked_H
+#define linked_H
 #include "BOOLEAN.h"
 #include <stdio.h>
 #include <time.h>
