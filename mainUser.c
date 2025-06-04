@@ -5,24 +5,28 @@
 #include "desain.h"
 
 int main() {
-    SplashScreen();
-    loadUsersFromFile("userDatabase.txt");
+    SplashScreenUser();  // Tampilkan tampilan awal Translibe
+    loadUsersFromFile("userDatabase.txt");  // Load data user
 
     int pilihan;
     do {
-        printf("\nMasukkan pilihan Anda: ");
+        printf("\n=== MENU PELANGGAN ===\n");
+        printf("1. Login\n");
+        printf("2. Register\n");
+        printf("3. Keluar\n");
+        printf("Pilihan Anda: ");
         scanf("%d", &pilihan);
-        getchar(); // Flush newline
+        getchar();  // Untuk menangani newline
 
         switch (pilihan) {
             case 1:
-                Login();
+                Login(); // Fungsi login (akan masuk ke menu pelanggan)
                 break;
             case 2:
-                printf("Belum ada fitur admin.\n");
+                Register(); // Fungsi registrasi
                 break;
             case 3:
-                printf("Terima kasih telah menggunakan sistem kami!\n");
+                printf("Terima kasih telah menggunakan layanan Translibe!\n");
                 break;
             default:
                 printf("Pilihan tidak valid. Silakan coba lagi.\n");

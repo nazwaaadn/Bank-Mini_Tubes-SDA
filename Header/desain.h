@@ -4,7 +4,8 @@
 #include <stdio.h>
 
 // ========== GLOBAL ==========
-void SplashScreen(); // Tampilan awal program
+void SplashScreenUser(); // Tampilan awal program
+void SplashScreenAdmin(); // Tampilan awal admin
 
 // ========== MODUL USER ==========
 void UserMenu();             // Menu utama pelanggan

@@ -1,7 +1,21 @@
-#include "library.h"
+#include "desain.h"
 #include <stdio.h>
 
-void SplashScreen(){
+void SplashScreenUser(){
+    printf("======================================================\n");
+    printf("||                                                  ||\n");
+    printf("||           SISTEM RUTE BUS TRANSBANDUNG           ||\n");
+    printf("||                                                  ||\n");
+    printf("||                    TRANSLIBE                     ||\n");
+    printf("||                                                  ||\n");
+    printf("||          Pemesanan Bus Antar Kota Bandung        ||\n");
+    printf("||                                                  ||\n");
+    printf("||             Dibuat oleh: Translibe               ||\n");
+    printf("||                                                  ||\n");
+    printf("======================================================\n");
+}
+
+void SplashScreenAdmin(){
     printf("======================================================\n");
     printf("||                                                  ||\n");
     printf("||           SISTEM RUTE BUS TRANSBANDUNG           ||\n");
@@ -11,13 +25,6 @@ void SplashScreen(){
     printf("||            Pencarian & Manajemen Rute            ||\n");
     printf("||                                                  ||\n");
     printf("||             Dibuat oleh: Translibe               ||\n");
-    printf("||                                                  ||\n");
-    printf("||                                                  ||\n");
-    printf("||                  Masuk sebagai...                ||\n");
-    printf("||                                                  ||\n");
-    printf("||                     1. User                      ||\n");
-    printf("||                     2. Admin                     ||\n");
-    printf("||                     3. Keluar                    ||\n");
     printf("||                                                  ||\n");
     printf("======================================================\n");
 }
