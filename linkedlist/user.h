@@ -1,9 +1,8 @@
 #ifndef user_H
 #define user_H
-#include "BOOLEAN.h"
+#include "boolean.h"
 #include <stdio.h>
 #include <time.h>
-#include "tiket.h"
 #define Nil NULL
 #define Info(P) (P)->Info
 #define Next(P) (P)->next
@@ -24,6 +23,8 @@ typedef struct NodeUser {
 } NodeUser;
 
 extern NodeUser *HeadUser;
+extern NodeUser* currentUser;
+
 
 
 void Register();
@@ -31,13 +32,12 @@ void Login();
 void insertUser(DataUser userBaru);
 void loginUser(char nama[], char password[]);
 void logoutUser();
-void deleteTransaksi(NodeUser* user, NodeTiket* tiket);
+// void deleteTransaksi(NodeUser* user, NodeTiket* tiket);
 
 // tambahan
 //
 void loadUsersFromFile(const char* filename);
 void saveUsersToFile(const char* filename);
 int isUsernameTaken(const char* nama);
-void printAllUsers();
 
 #endif
