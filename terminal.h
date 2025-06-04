@@ -14,22 +14,14 @@ typedef struct {
 }nbtree;
 
 typedef nbtree terminalTree[jml_maks+1];
+extern root;
 
 void CreateTerminal(terminalTree X);
-boolean IsEmpty (terminalTree P);
-/* Mengirimkan true jika terminalTree KOSONG */
-
-/***** Traversal *****/
-void PreOrder (terminalTree P);
+boolean PreOrder (terminalTree P, address idx, char* tujuan);
 /* Traversal PreOrder */
 /* IS : P terdefinisi */
 /* FS : Semua simpul P sudah ditampilkan secara PreOrder : Parent,
 fs, nb */
-void InOrder (terminalTree P);
-/* Traversal InOrder */
-/* IS : P terdefinisi */
-/* FS : Semua simpul P sudah ditampilkan secara InOrder : fs, Parent,
-Sisa anak lain */
-void PrintTerminal (terminalTree P);
+void TampilkanRuteBalik(terminalTree T, address idxTujuan, char* awal);
 
 #endif

@@ -49,3 +49,50 @@ void CreateTerminal(terminalTree X)
     X[41].info = "DayeuhKolot"; X[41].ps_fs = 42; X[41].ps_nb = nil; X[41].ps_pr = 40; 
     X[42].info = "Banjaran"; X[42].ps_fs = nil; X[42].ps_nb = nil; X[42].ps_pr = 41;  
 }
+
+boolean PreOrder(terminalTree P, address idx, char* tujuan) {
+    if (idx == nil) return false;
+
+    printf("-> %s\n", P[idx].info);  // Cetak terminal saat ini
+
+    if (strcmp(P[idx].info, tujuan) == 0) return true;
+
+    if (PreOrder(P, P[idx].ps_fs, tujuan)) return true;
+    if (PreOrder(P, P[idx].ps_nb, tujuan)) return true;
+
+    return false;
+}
+
+
+address findRuteAwal(terminalTree T, address idx, char* awal) {
+    if (idx == nil) return nil;
+
+    if (strcmp(T[idx].info, awal) == 0) {
+        return idx; // Terminal awal ditemukan, kembalikan index-nya
+    }
+
+    // Coba cari di first child
+    address hasil = findRuteAwal(T, T[idx].ps_fs, awal);
+    if (hasil != nil) return hasil;
+
+    // Coba cari di next sibling
+    hasil = findRuteAwal(T, T[idx].ps_nb, awal);
+    return hasil;
+}
+
+
+void TampilkanRuteBalik(terminalTree T, address idxTujuan, char* awal) {
+    address now = idxTujuan;
+
+    while (now != nil) {
+        printf("-> %s\n", T[now].info);
+        if (strcmp(T[now].info, awal) == 0) {
+            break; // berhenti saat sudah sampai ke awal
+        }
+        now = T[now].ps_pr; // naik ke parent
+    }
+
+    if (now == nil) {
+        printf("Terminal awal tidak ditemukan dalam jalur balik.\n");
+    }
+}

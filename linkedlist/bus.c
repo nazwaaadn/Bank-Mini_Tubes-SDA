@@ -1,6 +1,7 @@
 #include <limits.h>
 #include <malloc.h>
 #include "bus.h"
+#include "terminal.h"
 /********** BODY SUB PROGRAM ***********/
 /**** Predikat untuk test keadaan LIST ****/
 NodeBus *HeadBus = Nil;
@@ -24,33 +25,16 @@ NodeBus* alokasiNodeBus(DataBus busData) {
     return newNode;
 }
 
-RuteBus* alokasiRute(NodeRute* halte) {
-    RuteBus* newRute = (RuteBus*)malloc(sizeof(RuteBus));
-    if (newRute != NULL) {
-        newRute->halte = halte;
-        newRute->next = NULL;
-    }
-    return newRute;
-}
-
-void freeRute(RuteBus* rute) {
-    RuteBus* temp;
-    while (rute != NULL) {
-        temp = rute;
-        rute = rute->next;
-        free(temp);
-    }
-}
-
 void freeBus(NodeBus* busNode) {
     if (busNode != NULL) {
-        freeRute(busNode->Info.rute);  // bebaskan linked list rute
-        free(busNode);                 // bebaskan node bus
+        free(busNode);   
     }
 }
 
 void inputDataBus(DataBus *busBaru)
 {
+    terminalTree T;
+    int root = 0;
     printf("Masukkan ID Bus: ");
     scanf("%s", busBaru->idBus);
     printf("Masukkan Plat Nomor: ");
@@ -61,6 +45,30 @@ void inputDataBus(DataBus *busBaru)
     scanf("%d", &busBaru->kapasitas);
     printf("Masukkan Kelas (A/B/C): ");
     scanf(" %c", &busBaru->kelas);
+
+    char terminalAwal[50];
+    printf("Masukkan Terminal Awal: ");
+    scanf(" %[^\n]", terminalAwal);
+
+    char terminalTujuan[50];
+    printf("Masukkan Terminal Tujuan: ");
+    scanf(" %[^\n]", terminalTujuan);
+
+    char bufferRute[100] = ""; // buat buffer kosong untuk menyimpan rute
+    address awal = findRuteAwal(T, root, terminalAwal);
+    if (awal != nil) {
+        boolean akhir = PreOrderSimpanRute(T, awal, terminalTujuan, bufferRute);
+        if (akhir) {
+            strcpy(busBaru->rute, bufferRute);
+        } else {
+            printf("Terminal tujuan tidak ditemukan dari rute awal.\n");
+            strcpy(busBaru->rute, "-");
+        }
+    } else {
+        printf("Terminal awal tidak ditemukan.\n");
+        strcpy(busBaru->rute, "-");
+    }
+
 
     // Waktu keberangkatan
     struct tm waktuBerangkat = {0};
@@ -80,8 +88,7 @@ void inputDataBus(DataBus *busBaru)
     waktuTiba.tm_mday = 1;
     busBaru->kedatangan = mktime(&waktuTiba);
 
-    busBaru->rute = inputRute();
-    insertBus(&busBaru); // cukup kirim pointer
+    insertBus(busBaru); // cukup kirim pointer
 }
 
 
@@ -110,22 +117,13 @@ void insertBus(DataBus *busBaru)
             busBaru->idBus,
             busBaru->platNomor,
             busBaru->namaSupir,
+            busBaru->rute,
             busBaru->kapasitas,
             busBaru->kelas,
             wktBrk->tm_hour, wktBrk->tm_min,
             wktTba->tm_hour, wktTba->tm_min
         );
 
-        RuteBus *currentRute = busBaru->rute;
-        while (currentRute != NULL) {
-            if (currentRute->halte != NULL) {
-                fprintf(file, "%s", currentRute->halte);
-                if (currentRute->next != NULL) {
-                    fprintf(file, "->");
-                }
-            }
-            currentRute = currentRute->next;
-        }
         fprintf(file, "\n");
         fclose(file);
     } else {
@@ -133,35 +131,114 @@ void insertBus(DataBus *busBaru)
     }
 }
 
+void inputDataBusBaru(DataBus *busBaru) {
+    printf("Masukkan Nama Supir Baru: ");
+    scanf(" %[^\n]", busBaru->namaSupir);
 
-void insertRute(NodeBus* bus, NodeRute* halte)
-{
-    if (bus != NULL)
-    {
-        RuteBus* newRute = alokasiRute(halte);
-        if (bus->Info.rute == NULL) {
-            bus->Info.rute = newRute;  
-        } else {
-            RuteBus* current = bus->Info.rute;
-            while (current->next != NULL) {
-                current = current->next;  
-            }
-            current->next = newRute;  
-        }
-    }
+    printf("Masukkan Kapasitas Baru: ");
+    scanf("%d", &busBaru->kapasitas);
+
+    printf("Masukkan Kelas Baru (A/B/C): ");
+    scanf(" %c", &busBaru->kelas);
+
+    // Waktu keberangkatan
+    struct tm waktuBerangkat = {0};
+    printf("Masukkan Waktu Keberangkatan Baru (HH MM): ");
+    scanf("%d %d", &waktuBerangkat.tm_hour, &waktuBerangkat.tm_min);
+    waktuBerangkat.tm_year = 123;
+    waktuBerangkat.tm_mon = 0;
+    waktuBerangkat.tm_mday = 1;
+    busBaru->keberangkatan = mktime(&waktuBerangkat);
+
+    // Waktu kedatangan
+    struct tm waktuTiba = {0};
+    printf("Masukkan Waktu Kedatangan Baru (HH MM): ");
+    scanf("%d %d", &waktuTiba.tm_hour, &waktuTiba.tm_min);
+    waktuTiba.tm_year = 123;
+    waktuTiba.tm_mon = 0;
+    waktuTiba.tm_mday = 1;
+    busBaru->kedatangan = mktime(&waktuTiba);
 }
 
-void editBus(char idBus[], DataBus busBaru)
-{
+void tampilkanDataBus(DataBus bus) {
+    printf("\n--- Data Bus ---\n");
+    printf("ID Bus: %s\n", bus.idBus);
+    printf("Plat Nomor: %s\n", bus.platNomor);
+    printf("Nama Supir: %s\n", bus.namaSupir);
+    printf("Kapasitas: %d\n", bus.kapasitas);
+    printf("Kelas: %c\n", bus.kelas);
+    printf("Rute: %s\n", bus.rute);
+
+    struct tm *wkt = localtime(&bus.keberangkatan);
+    printf("Keberangkatan: %02d:%02d\n", wkt->tm_hour, wkt->tm_min);
+
+    wkt = localtime(&bus.kedatangan);
+    printf("Kedatangan: %02d:%02d\n", wkt->tm_hour, wkt->tm_min);
+}
+
+
+void editBus(char idBus[]) {
     NodeBus *current = HeadBus;
     while (current != Nil) {
         if (strcmp(current->Info.idBus, idBus) == 0) {
-            current->Info = busBaru;  
-            freeRute(current->Info.rute);  
-            current->Info.rute = busBaru.rute;  
+            printf("\nData sebelumnya:\n");
+            tampilkanDataBus(current->Info);
+
+            DataBus busBaru;
+            strcpy(busBaru.idBus, current->Info.idBus);  // ID tetap sama
+            strcpy(busBaru.platNomor, current->Info.platNomor);  // Plat tetap
+
+            // Input data baru
+            inputDataBusBaru(&busBaru);
+
+            // Tanya apakah ingin mengubah rute
+            char jawab;
+            printf("Apakah ingin mengubah rute? (y/n): ");
+            scanf(" %c", &jawab);
+
+            if (jawab == 'y' || jawab == 'Y') {
+                editRute(idBus, &busBaru); // Update field rute
+            } else {
+                strcpy(busBaru.rute, current->Info.rute); // Tetap pakai rute lama
+            }
+
+            // Simpan perubahan
+            current->Info = busBaru;
+            printf("\nData bus berhasil diperbarui!\n");
             return;
         }
         current = current->next;
+    }
+
+    printf("Bus dengan ID %s tidak ditemukan.\n", idBus);
+}
+
+
+void editRute(char idBus[], DataBus *busBaru)
+{
+    terminalTree T;
+
+    char terminalAwal[50];
+    printf("Masukkan Terminal Awal: ");
+    scanf(" %[^\n]", terminalAwal);
+
+    char terminalTujuan[50];
+    printf("Masukkan Terminal Tujuan: ");
+    scanf(" %[^\n]", terminalTujuan);
+
+    char bufferRute[100] = ""; // buat buffer kosong untuk menyimpan rute
+    address awal = findRuteAwal(T, root, terminalAwal);
+    if (awal != nil) {
+        boolean ketemu = PreOrderSimpanRute(T, awal, terminalTujuan, bufferRute);
+        if (ketemu) {
+            strcpy(busBaru->rute, bufferRute);
+        } else {
+            printf("Terminal tujuan tidak ditemukan dari rute awal.\n");
+            strcpy(busBaru->rute, "-");
+        }
+    } else {
+        printf("Terminal awal tidak ditemukan.\n");
+        strcpy(busBaru->rute, "-");
     }
 }
 
@@ -180,7 +257,6 @@ void deleteBus(char idBus[])
                 }
                 prev->next = current->next;  
             }  
-            freeRute(current->Info.rute);  
             return;
         }
         current = current->next;
