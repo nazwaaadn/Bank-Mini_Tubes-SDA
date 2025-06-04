@@ -1,24 +1,32 @@
 #ifndef STACK_H
 #define STACK_H
-#include "BOOLEAN.h"
-#include "tiket.h"
-#include "time.h"
+#define Info(P) (P)->info
+#define Next(P) (P)->next
 #define Nil NULL
+#define Top(S) (S)->Top
 
-typedef struct NodeStack {
-    NodeTiket* tiket;           // Tiket yang disimpan di stack
-    struct NodeStack* next;
-} NodeStack;
+#include "terminal.h"
+#include "boolean.h"
+#include <stdlib.h>
+
+typedef struct tElmtStack *addressStack;
+typedef struct tElmtStack {
+    nbtree info;
+    addressStack next;
+} ElmtStack;
 
 typedef struct {
-    NodeStack* top;
+    addressStack Top;
 } Stack;
 
-void SetTop (Stack *S, Stack NewTop );
-void CreateEmpty (Stack *S);
-boolean IsEmpty (Stack S);
-void Push (Stack *S, NodeTiket* X);
-void Pop (Stack *S, NodeTiket** X);
+/* ==== FUNGSI & PROSEDUR ==== */
+addressStack AlokasiStack(nbtree X);
+void DealokasiStack(addressStack P);
+void CreateEmptyStack(Stack *S);
+boolean IsEmptyStack(Stack S);
+void Push(Stack *S, nbtree X);
+void Pop(Stack *S, nbtree *X);
+void InsertTop(Stack *S, addressStack P);
+void DelTop(Stack *S, addressStack *P);
 
 #endif
-

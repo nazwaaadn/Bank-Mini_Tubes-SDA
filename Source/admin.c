@@ -2,6 +2,7 @@
 #include <string.h>
 #include "admin.h"
 
+
 int LoginAdmin() {
     char id[50];
     char password[50];
