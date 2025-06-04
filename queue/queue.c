@@ -5,7 +5,48 @@
 #include <stdio.h>
 #include "bus.h"
 
-/*Membuat sebuah queue baru dengan First dan Rear NULL*/
+NodeBus* AlokasiQueue(DataBus X, NodeBus **P)
+{
+    NodeBus *P = (NodeBus *)malloc(sizeof(NodeBus));
+    if (*P != NULL) {
+        Info(*P) = X;
+        Next(*P) = Nil;
+    } else {
+        printf("Alokasi Queue gagal\n");
+    }
+    return P;
+}
+
+void DeAlokasiQueue(NodeBus *P)
+{
+    free(P);
+}
+
+void InsertLast(Queue *Q, NodeBus *P)
+{
+    if (is_Empty(*Q))
+    {
+        Front(*Q) = P;
+        Rear(*Q) = P;
+    } else {
+        Next(Rear(*Q)) = P; 
+        Rear(*Q) = P;      
+    }
+    
+}
+
+void DelFirst(Queue *Q, NodeBus **P)
+{
+    *P = Front(*Q);
+    if (Front(*Q) == Rear(*Q)) {
+        Front(*Q) = Nil;
+        Rear(*Q) = Nil;
+    } else {
+        Front(*Q) = Next(*P);
+    }
+    Next(*P) = Nil;
+}
+
 void CreateQueue (Queue *Q)
 {
 	Front(*Q) = Nil;
@@ -33,7 +74,7 @@ boolean is_Full(Queue Q) {
 
 void EnQueue(Queue *Q, DataBus X) {
     NodeBus *P;
-    P = Alokasi(X);
+    P = AlokasiQueue(X, &P);
     if(!is_Full(*Q)) {
             if (is_Empty(*Q)) {
                 Front(*Q) = P;
@@ -54,6 +95,6 @@ void deQueue(Queue *Q, DataBus *X) {
     NodeBus *P;
     DelFirst(Q, &P);  // Memanggil prosedur DelFirst
     *X = Info(P); 
-    DeAlokasi(P);
+    DeAlokasiQueue(P);
 }
 
