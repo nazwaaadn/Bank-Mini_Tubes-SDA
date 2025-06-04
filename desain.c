@@ -34,6 +34,7 @@ void UserMenu()
     printf("2. Lihat Tiket Aktif\n");
     printf("3. Riwayat Perjalanan\n");
     printf("4. Batalkan Tiket\n");
+    printf("5. Logout\n");
     printf("5. Keluar\n");
     printf("===================================\n");
     printf("Masukkan pilihan Anda: ");
@@ -46,28 +47,12 @@ void AdminMenu()
     printf("===================================\n");
     printf("1. Lihat Bus di Setiap Terminal\n");
     printf("2. Release Bus dari Terminal\n");
-    printf("3. Tambah Bus Baru\n");
-    printf("4. Atur Rute Bus yang Telah Kembali\n");
-    printf("5. Lihat Data Tiket Pelanggan\n");
-    printf("6. Laporan Perjalanan Bus\n");
-    printf("7. Manajemen Terminal\n");
-    printf("8. Manajemen Akun Pelanggan\n");
-    printf("9. Riwayat Transaksi Tiket\n");
-    printf("10. Keluar\n");
+    printf("3. Manajemen Bus\n");
+    printf("4. Laporan Transaksi\n");
+    printf("5. Laporan Perjalanan Bus\n");
+    printf("6. Logout\n");
+    printf("7. Keluar\n");
     printf("===================================\n");
-    printf("Masukkan pilihan Anda: ");
-}
-
-void ManajemenTerminal()
-{
-    printf("===============================================\n");
-    printf("|            MANAJEMEN TERMINAL               |\n");
-    printf("===============================================\n");
-    printf("1. Tambah Terminal Baru\n");
-    printf("2. Hapus Terminal\n");
-    printf("3. Lihat Daftar Terminal\n");
-    printf("4. Kembali ke Menu Utama\n");
-    printf("===============================================\n");
     printf("Masukkan pilihan Anda: ");
 }
 

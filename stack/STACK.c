@@ -5,70 +5,100 @@
 #include <limits.h>
 #include <malloc.h>
 #include "STACK.h"
-#include "linked.h"
-#include "queue.h"
+#include "terminal.h"
 
-/**** Perubahan nilai komponen struktur ****/
-void SetFirst (Stack *S, Stack NewFirst )
-/* Memberi Nilai First yang baru dengan NewFirst */
+addressStack AlokasiStack(nbtree X) {
+    addressStack S = (addressStack)malloc(sizeof(ElmtStack));
+    if (S != NULL) {
+        Info(S) = X;
+        Next(S) = Nil;
+    } else {
+        printf("Alokasi Stack gagal\n");
+    }
+    return S;
+}
+
+void DealokasiStack(addressStack P)
 {
-	*S = NewFirst;
+	free(P);
 }
 
 /*    PROTO TYPE    */
 /**** Konstruktor/Kreator ****/
-void CreateEmpty (Stack *S)
+void CreateEmptyStack (Stack *S)
 /* IS : S sembarang */
 /* FS : Membuat sebuah stack S yang kosong */
-/* Ciri stack kosong : First bernilai NULL */
+/* Ciri stack kosong : Top bernilai NULL */
 {
 	
-	(*S).First = Nil;
+	Top(S) = Nil;
 }
 
 /**** Predikat untuk test keadaan KOLEKSI ****/
-boolean IsEmpty (Stack S)
+boolean IsEmptyStack (Stack S)
 /* Mengirim true jika Stack Kosong */
 {
-	if (S.First == NULL)
+	if (S.Top == NULL)
 		return true;
 	else
 		return false;
 }
 
 /**** Menambahkan sebuah elemen ke Stack ****/
-void Push (Stack *S, infotype X)
+void Push (Stack *S, nbtree X)
 /* Menambahkan X sebagai elemen stack S */
 /* IS : S mungkin kosong */
-/* FS : X menjadi First yang baru */
+/* FS : X menjadi Top yang baru */
 {
-	address P;
+	addressStack P;
 	P = Alokasi(X);
-	if (!IsEmpty(*S))
+	if (!IsEmptyStack(*S))
 	{
-		InsertFirst(S, P);
+		InsertTop(S, P);
 	} else {
 		Next(P) = Nil;
-		(*S).First = P;
+		Top(S) = P;
 	}
 }
 
 /**** Menghapus sebuah elemen Stack ****/
-void Pop (Stack *S, infotype *X)
+void Pop (Stack *S, nbtree *X)
 /* Menghapus X dari Stack S */
 /* IS : S tidak mungkin kosong */
-/* FS : X adalah nilai elemen First yang lama */
+/* FS : X adalah nilai elemen Top yang lama */
 {
-	address P;
-	P = (*S).First;
-	if (!IsEmpty(*S))
+	addressStack P;
+	P = Top(S);
+	if (!IsEmptyStack(*S))
 	{
-		DelFirst(S, &P);
+		DelTop(S, &P);
 		DeAlokasi(P);
 	}
 	else
 	{
-		*X = 0;
+		X = Nil;
 	}
+}
+
+void InsertTop(Stack *S, addressStack P)
+{
+	if (IsEmptyStack(*S)) {
+		Top(S) = P;
+	} else {
+		Next(P) = Top(S);
+		Top(S) = P;
+	}
+}
+
+void DelTop(Stack *S, addressStack *P)
+{
+	if (!isEmptyStack(*S))
+	{
+		Top(S) = Next(Top(S));
+		*P = Top(S);
+	} else {
+		*P = Nil;
+	}
+	
 }
 

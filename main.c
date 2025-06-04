@@ -5,10 +5,12 @@
 
 int main() {
     SplashScreen();
+    printf("Masukkan pilihan Anda: ");
     int choice;
     scanf("%d", &choice);
     switch (choice) {
         case 1:
+            
             UserMenu();
             int userChoice;
             scanf("%d", &userChoice);
