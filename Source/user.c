@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char* FileUser = "linkedlist/userDatabase.txt";
+const char* FileUser = "../FileManajemen/userDatabase.txt";
 
 
 NodeUser *HeadUser = NULL;
