@@ -1,5 +1,5 @@
-#ifndef LIBRARY_H
-#define LIBRARY_H
+#ifndef DESAIN_H
+#define DESAIN_H
 
 #include <stdio.h>
 
@@ -25,5 +25,6 @@ void AdminMenu();                   // Menu utama admin
 // void ManajemenTerminal();          // Menampilkan menu manajemen terminal
 // void ManajemenAkunPelanggan();     // Mengelola data user
 // void RiwayatTransaksiTiket();      // Menampilkan semua riwayat transaksi tiket
+void ManajemenBus();               // Manajemen bus (tambah, hapus, edit)
 
 #endif

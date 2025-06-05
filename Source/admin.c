@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <string.h>
-#include "admin.h"
+#include "../Header/admin.h"
 
 
 int LoginAdmin() {

@@ -1,4 +1,4 @@
-#include "desain.h"
+#include "Header/desain.h"
 #include <stdio.h>
 
 void SplashScreenUser(){
@@ -50,7 +50,7 @@ void AdminMenu()
     printf("===================================\n");
     printf("1. Lihat Bus di Setiap Terminal\n");
     printf("2. Release Bus dari Terminal\n");
-    printf("3. Tambah Bus Baru\n");
+    printf("3. Manajemen Bus\n");
     printf("4. Atur Rute Bus yang Telah Kembali\n");
     printf("5. Lihat Data Tiket Pelanggan\n");
     printf("6. Laporan Perjalanan Bus\n");
@@ -75,19 +75,19 @@ void AdminMenu()
 //     printf("Masukkan pilihan Anda: ");
 // }
 
-// void ManajemenBus()
-// {
-//     printf("===============================================\n");
-//     printf("|              MANAJEMEN BUS                  |\n");
-//     printf("===============================================\n");
-//     printf("1. Tambah Bus Baru\n");
-//     printf("2. Hapus Bus\n");
-//     printf("3. Edit Data Bus\n");
-//     printf("4. Lihat Daftar Bus\n");
-//     printf("5. Kembali ke Menu Utama\n");
-//     printf("===============================================\n");
-//     printf("Masukkan pilihan Anda: ");
-// }
+void ManajemenBus()
+{
+    printf("===============================================\n");
+    printf("|              MANAJEMEN BUS                  |\n");
+    printf("===============================================\n");
+    printf("1. Tambah Bus Baru\n");
+    printf("2. Hapus Bus\n");
+    printf("3. Edit Data Bus\n");
+    printf("4. Lihat Daftar Bus\n");
+    printf("5. Kembali ke Menu Utama\n");
+    printf("===============================================\n");
+    printf("Masukkan pilihan Anda: ");
+}
 
 // void LihatRiwayat()
 // {
