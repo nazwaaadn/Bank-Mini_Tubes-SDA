@@ -37,12 +37,16 @@ extern NodeBus *HeadBus;
 boolean isBusListEmpty();
 NodeBus* alokasiNodeBus(DataBus busData);
 void freeBus(NodeBus* busNode);
-void inputDataBus(DataBus *busBaru);
-void insertBus(DataBus *busBaru);
+NodeBus* inputDataBus(terminalTree T, int root);
+void insertBus(NodeBus *newNode);
+void insertRute(NodeBus *busNode, char *rute);
+void editRute(char idBus[], DataBus *busBaru);
 void inputDataBusBaru(DataBus *busBaru);
+void hapusNewline(char *str);
 void editBus(char idBus[]);
 void printAllBus(); 
 NodeBus* searchBusByID(char idBus[]);
 void deleteBus(char idBus[]);
+void saveAllBusToFile();
 
 #endif

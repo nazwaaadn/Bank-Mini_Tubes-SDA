@@ -1,6 +1,7 @@
 #include <limits.h>
 #include <malloc.h>
-#include "terminal.h"
+#include "../Header/terminal.h"
+#include <string.h>
 
 void CreateTerminal(terminalTree X)
 {
@@ -50,34 +51,34 @@ void CreateTerminal(terminalTree X)
     X[42].info = "Banjaran"; X[42].ps_fs = nil; X[42].ps_nb = nil; X[42].ps_pr = 41;  
 }
 
-boolean PreOrder(terminalTree P, address idx, char* tujuan) {
+boolean PreOrder(terminalTree P, address idx, char* tujuan, char* bufferRute) {
     if (idx == nil) return false;
 
-    printf("-> %s\n", P[idx].info);  // Cetak terminal saat ini
+    if (strlen(bufferRute) > 0) strcat(bufferRute, " -> ");
+    strcat(bufferRute, P[idx].info);
+    printf("-> %s\n", P[idx].info);
 
     if (strcmp(P[idx].info, tujuan) == 0) return true;
 
-    if (PreOrder(P, P[idx].ps_fs, tujuan)) return true;
-    if (PreOrder(P, P[idx].ps_nb, tujuan)) return true;
+    if (PreOrder(P, P[idx].ps_fs, tujuan, bufferRute)) return true;
+    if (PreOrder(P, P[idx].ps_nb, tujuan, bufferRute)) return true;
 
     return false;
 }
+
 
 
 address findRuteAwal(terminalTree T, address idx, char* awal) {
     if (idx == nil) return nil;
 
     if (strcmp(T[idx].info, awal) == 0) {
-        return idx; // Terminal awal ditemukan, kembalikan index-nya
+        return idx;
     }
 
-    // Coba cari di first child
     address hasil = findRuteAwal(T, T[idx].ps_fs, awal);
     if (hasil != nil) return hasil;
 
-    // Coba cari di next sibling
-    hasil = findRuteAwal(T, T[idx].ps_nb, awal);
-    return hasil;
+    return findRuteAwal(T, T[idx].ps_nb, awal);
 }
 
 
