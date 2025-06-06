@@ -12,7 +12,6 @@ int main() {
         return 0;
     }
 
-    // loadUsersFromFile("userDatabase.txt");
 
     int pilihan;
     do {
@@ -39,7 +38,6 @@ int main() {
                         CreateTerminal(T);  // Inisialisasi terminalTree
                         int root = 0;  // Asumsi root adalah 0
                         NodeBus *busBaru = inputDataBus(T, root); // langsung NodeBus*
-                        insertBus(busBaru); // tanpa &
                         printf("Data bus berhasil ditambahkan.\n");
                         break;
                     }
@@ -48,15 +46,17 @@ int main() {
                         char idBus[10];
                         printf("Masukkan ID Bus yang ingin dihapus: ");
                         scanf("%s", &idBus);
+
                         deleteBus(idBus);
-                        printf("Bus dengan ID %s berhasil dihapus.\n", idBus);
                         break;
                     }
                     case 3: {
                         char idBus[10];
                         printf("Masukkan ID Bus yang ingin diedit: ");
                         scanf("%s", &idBus);
+                        bersihkanDataBus();                        
                         editBus(idBus);
+
                         break;
                     }
                     case 4:

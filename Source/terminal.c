@@ -51,20 +51,8 @@ void CreateTerminal(terminalTree X)
     X[42].info = "Banjaran"; X[42].ps_fs = nil; X[42].ps_nb = nil; X[42].ps_pr = 41;  
 }
 
-boolean PreOrder(terminalTree P, address idx, char* tujuan, char* bufferRute) {
-    if (idx == nil) return false;
 
-    if (strlen(bufferRute) > 0) strcat(bufferRute, " -> ");
-    strcat(bufferRute, P[idx].info);
-    printf("-> %s\n", P[idx].info);
 
-    if (strcmp(P[idx].info, tujuan) == 0) return true;
-
-    if (PreOrder(P, P[idx].ps_fs, tujuan, bufferRute)) return true;
-    if (PreOrder(P, P[idx].ps_nb, tujuan, bufferRute)) return true;
-
-    return false;
-}
 
 
 
