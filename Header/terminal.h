@@ -22,7 +22,7 @@ void CreateTerminal(terminalTree X);
 /* FS : Semua simpul P sudah ditampilkan secara PreOrder : Parent,
 fs, nb */
 address findRuteAwal(terminalTree T, address idx, char* awal);
-boolean PreOrder(terminalTree P, address idx, char* tujuan, char* bufferRute);
+
 void TampilkanRuteBalik(terminalTree T, address idxTujuan, char* awal);
 
 #endif

@@ -1,3 +1,3 @@
-Bus02|A1245JH|Hanun|50|A|DagoSimpang DagoCiumbuleuitPunclut|06:20|06:20
-Bus03|D198ER|rayn|40|C|DagoSimpang DagoCiumbuleuitPunclut|15:20|15:20
 Bus04|ajhja|nn|30|A|DagoSimpang DagoCiumbuleuitPunclutLembangSetiabudiLedengParongpongPasteurSukajadiPajajaranCicendoCimi�߰c|16:20|16:20
+ansma|saj|sak|20|C|Dago->Pasteur->Sukajadi|09:30|09:30
+    *||�������)|40|C|Dago->Simpang Dago->Ciumbuleuit->Punclut|13:40|13:40
