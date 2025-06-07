@@ -43,7 +43,7 @@ NodeBus* inputDataBus(terminalTree T, int root) {
     // Input data dasar
     printf("Masukkan ID Bus: ");
     scanf("%9s", busBaru->Info.idBus);
-    getchar(); // bersihkan newline
+    getchar();
 
     printf("Masukkan Plat Nomor: ");
     scanf("%14s", busBaru->Info.platNomor);
@@ -61,37 +61,7 @@ NodeBus* inputDataBus(terminalTree T, int root) {
     scanf(" %c", &busBaru->Info.kelas);
     getchar();
 
-    // Input terminal dengan fgets
-    char terminalAwal[50], terminalTujuan[50];
-
-    printf("Masukkan Terminal Awal: ");
-    fgets(terminalAwal, sizeof(terminalAwal), stdin);
-    terminalAwal[strcspn(terminalAwal, "\n")] = '\0';
-
-    printf("Masukkan Terminal Tujuan: ");
-    fgets(terminalTujuan, sizeof(terminalTujuan), stdin);
-    terminalTujuan[strcspn(terminalTujuan, "\n")] = '\0';
-
-    NodeRute* headRute = NULL;
-    address awal = findRuteAwal(T, root, terminalAwal);
-
-    if (awal != nil) {
-        if (!PreOrderToLinkedList(T, awal, terminalTujuan, &headRute)) {
-            printf("Terminal tujuan tidak ditemukan dari %s.\n", terminalAwal);
-        } else {
-            NodeRute* curr = headRute;
-            printf("Rute dari %s ke %s:\n", terminalAwal, terminalTujuan);
-            while (curr != NULL) {
-                printf("- %s\n", curr->namaTerminal);
-                curr = curr->next;
-            }
-            busBaru->Info.rute = headRute;
-        }
-    } else {
-        printf("Terminal awal tidak ditemukan.\n");
-    }
-
-    // Input waktu
+    // Input waktu keberangkatan bus
     int jam, menit;
     printf("Masukkan Waktu Keberangkatan (HH MM): ");
     scanf("%d %d", &jam, &menit);
@@ -103,6 +73,7 @@ NodeBus* inputDataBus(terminalTree T, int root) {
     waktuBerangkat.tm_sec = 0;
     busBaru->Info.keberangkatan = mktime(&waktuBerangkat);
 
+    // Input waktu kedatangan bus
     printf("Masukkan Waktu Kedatangan (HH MM): ");
     scanf("%d %d", &jam, &menit);
 
@@ -111,8 +82,42 @@ NodeBus* inputDataBus(terminalTree T, int root) {
     waktuTiba.tm_min = menit;
     busBaru->Info.kedatangan = mktime(&waktuTiba);
 
+    getchar(); // Bersihkan newline sebelum fgets berikutnya
+
+    // Input terminal awal dan tujuan
+    char terminalAwal[50], terminalTujuan[50];
+    printf("Masukkan Terminal Awal: ");
+    fgets(terminalAwal, sizeof(terminalAwal), stdin);
+    terminalAwal[strcspn(terminalAwal, "\n")] = '\0';
+
+    printf("Masukkan Terminal Tujuan: ");
+    fgets(terminalTujuan, sizeof(terminalTujuan), stdin);
+    terminalTujuan[strcspn(terminalTujuan, "\n")] = '\0';
+
+    // Cari rute dari awal ke tujuan
+    NodeRute* headRute = NULL;
+    NodeRute* tailRute = NULL;
+    address awal = findRuteAwal(T, root, terminalAwal);
+
+    if (awal != nil) {
+        if (!PreOrderToLinkedList(T, awal, terminalTujuan, &headRute, busBaru->Info.kedatangan)) {
+            printf("❌ Terminal tujuan tidak ditemukan dari %s.\n", terminalAwal);
+        } else {
+            NodeRute* curr = headRute;
+            printf("Rute dari %s ke %s:\n", terminalAwal, terminalTujuan);
+            while (curr != NULL) {
+                struct tm* jam = localtime(&curr->waktubrgkt);
+                printf("- %s (%02d:%02d)\n", curr->namaTerminal, jam->tm_hour, jam->tm_min);
+                curr = curr->next;
+            }
+            busBaru->Info.rute = headRute;
+        }
+    } else {
+        printf("❌ Terminal awal tidak ditemukan.\n");
+    }
+
     busBaru->next = NULL;
-    saveSingleBusToFile(busBaru->Info); // Simpan bus baru ke file
+    saveSingleBusToFile(busBaru->Info); // Simpan ke file
     return busBaru;
 }
 
@@ -160,22 +165,31 @@ void tampilkanDataBus(DataBus bus) {
     printf("Nama Supir: %s\n", bus.namaSupir);
     printf("Kapasitas: %d\n", bus.kapasitas);
     printf("Kelas: %c\n", bus.kelas);
-    char ruteBuffer[255] = "";
+
+    // Menampilkan rute dan waktu keberangkatan setiap terminal
+    char ruteBuffer[1024] = "";
     NodeRute* curr = bus.rute;
     while (curr != NULL) {
+        struct tm *wktTerminal = localtime(&curr->waktubrgkt);
+        char waktuStr[10];
+        sprintf(waktuStr, "%02d:%02d", wktTerminal->tm_hour, wktTerminal->tm_min);
         strcat(ruteBuffer, curr->namaTerminal);
+        strcat(ruteBuffer, " (");
+        strcat(ruteBuffer, waktuStr);
+        strcat(ruteBuffer, ")");
         if (curr->next != NULL) strcat(ruteBuffer, "->");
         curr = curr->next;
     }
 
+    printf("Rute: %s\n", ruteBuffer);
 
+    // Menampilkan waktu keberangkatan dan kedatangan bus
     struct tm *wkt = localtime(&bus.keberangkatan);
     printf("Keberangkatan: %02d:%02d\n", wkt->tm_hour, wkt->tm_min);
 
     wkt = localtime(&bus.kedatangan);
     printf("Kedatangan: %02d:%02d\n", wkt->tm_hour, wkt->tm_min);
 }
-
 
 void hapusNewline(char *str) {
     size_t len = strlen(str);
@@ -197,18 +211,20 @@ void editBus(char idBus[]) {
     strcpy(busBaru.platNomor, busNode->Info.platNomor);
     busBaru.kapasitas = busNode->Info.kapasitas;
 
-    // Ambil data yang akan diedit dari pengguna
+    // Ambil data editan dari user
     inputDataBusBaru(&busBaru);
 
+    // Hapus rute lama
+    hapusRute(&busBaru.rute);
+
     // --- Input rute baru ---
-    hapusRute(&busBaru.rute); // pastikan NULL
     terminalTree T;
-    CreateTerminal(T);  // pastikan terminal sudah diinisialisasi
+    CreateTerminal(T);  // Inisialisasi terminal
     int root = 0;
 
     char terminalAwal[50], terminalTujuan[50];
     printf("Masukkan Terminal Awal: ");
-    while ((getchar()) != '\n');  // flush
+    while ((getchar()) != '\n');  // flush stdin
     fgets(terminalAwal, sizeof(terminalAwal), stdin);
     terminalAwal[strcspn(terminalAwal, "\n")] = '\0';
 
@@ -217,14 +233,16 @@ void editBus(char idBus[]) {
     terminalTujuan[strcspn(terminalTujuan, "\n")] = '\0';
 
     address awal = findRuteAwal(T, root, terminalAwal);
-    if (awal != nil && PreOrderToLinkedList(T, awal, terminalTujuan, &busBaru.rute)) {
-        // berhasil
+    NodeRute* tailRute = NULL;
+
+    if (awal != nil && PreOrderToLinkedList(T, awal, terminalTujuan, &busBaru.rute, busBaru.kedatangan)) {
+        printf("✅ Rute berhasil dibentuk.\n");
     } else {
-        printf("Rute tidak valid atau tidak ditemukan.\n");
+        printf("❌ Rute tidak valid atau tidak ditemukan.\n");
         busBaru.rute = NULL;
     }
 
-    // --- Salin ulang data ke file (selain yang sedang diedit) ---
+    // Salin ulang isi file tanpa baris yang diedit
     FILE *src = fopen("FileManajemen/dataBus.txt", "r");
     FILE *temp = fopen("FileManajemen/temp.txt", "w");
     if (!src || !temp) {
@@ -243,7 +261,7 @@ void editBus(char idBus[]) {
         }
     }
 
-    // Tambahkan versi baru ke file
+    // Tambahkan data baru ke file temp
     char ruteStr[512] = "";
     ruteToString(busBaru.rute, ruteStr, sizeof(ruteStr));
 
@@ -266,7 +284,7 @@ void editBus(char idBus[]) {
     remove("FileManajemen/dataBus.txt");
     rename("FileManajemen/temp.txt", "FileManajemen/dataBus.txt");
 
-    printf("Data bus berhasil diperbarui!\n");
+    printf("✅ Data bus berhasil diperbarui!\n");
     tampilkanDataBus(busBaru);
 }
 
@@ -318,39 +336,6 @@ NodeBus* searchBusByID(char idBus[]) {
 
     fclose(file);
     return NULL;
-}
-
-void editRute(char idBus[], DataBus *busBaru) {
-    terminalTree T;
-    CreateTerminal(T); // Bangun struktur terminal
-    int root = 0;
-
-    char terminalAwal[50], terminalTujuan[50];
-    printf("Masukkan Terminal Awal: ");
-    getchar();
-    fgets(terminalAwal, sizeof(terminalAwal), stdin);
-    terminalAwal[strcspn(terminalAwal, "\n")] = '\0';
-
-    printf("Masukkan Terminal Tujuan: ");
-    fgets(terminalTujuan, sizeof(terminalTujuan), stdin);
-    terminalTujuan[strcspn(terminalTujuan, "\n")] = '\0';
-
-    hapusRute(&busBaru->rute);
-
-    NodeRute* headRute = NULL;
-    address awal = findRuteAwal(T, root, terminalAwal);
-
-    if (awal != nil) {
-        if (PreOrderToLinkedList(T, awal, terminalTujuan, &headRute)) {
-            busBaru->rute = headRute;
-        } else {
-            printf("Terminal tujuan tidak ditemukan.\n");
-            busBaru->rute = NULL;
-        }
-    } else {
-        printf("Terminal awal tidak ditemukan.\n");
-        busBaru->rute = NULL;
-    }
 }
 
 
@@ -458,13 +443,11 @@ NodeRute* stringToRute(const char* str) {
 }
 
 void saveSingleBusToFile(DataBus bus) {
-    // Lindungi dari pointer string rusak
     if (strlen(bus.idBus) == 0 || strlen(bus.platNomor) == 0 || strlen(bus.namaSupir) == 0) {
         printf("❌ Data tidak lengkap. Gagal menyimpan bus!\n");
         return;
     }
 
-    // Validasi kelas juga
     if (!(bus.kelas == 'A' || bus.kelas == 'B' || bus.kelas == 'C')) {
         printf("❌ Kelas bus tidak valid. Gagal menyimpan bus!\n");
         return;
@@ -484,11 +467,22 @@ void saveSingleBusToFile(DataBus bus) {
         return;
     }
 
-    char ruteStr[255] = "-";
-    if (bus.rute != NULL) {
-        ruteToString(bus.rute, ruteStr, sizeof(ruteStr));
+    // Menyusun rute dengan waktu keberangkatan terminal
+    char ruteStr[1024] = "";
+    NodeRute* curr = bus.rute;
+    while (curr != NULL) {
+        struct tm *wktTerminal = localtime(&curr->waktubrgkt);  // Waktu keberangkatan setiap terminal
+        char waktuStr[10];
+        sprintf(waktuStr, "%02d:%02d", wktTerminal->tm_hour, wktTerminal->tm_min);  // Format waktu
+        strcat(ruteStr, curr->namaTerminal);
+        strcat(ruteStr, " (");
+        strcat(ruteStr, waktuStr);
+        strcat(ruteStr, ")");
+        if (curr->next != NULL) strcat(ruteStr, "->");
+        curr = curr->next;
     }
 
+    // Simpan data bus dan rutenya ke file
     fprintf(file, "%s|%s|%s|%d|%c|%s|%02d:%02d|%02d:%02d\n",
         bus.idBus,
         bus.platNomor,
@@ -502,32 +496,6 @@ void saveSingleBusToFile(DataBus bus) {
 
     fclose(file);
 }
-
-void bersihkanDataBus() {
-    FILE *src = fopen("FileManajemen/dataBus.txt", "r");
-    FILE *temp = fopen("FileManajemen/temp.txt", "w");
-    if (!src || !temp) {
-        printf("Gagal membuka file untuk pembersihan.\n");
-        return;
-    }
-
-    char line[512];
-    while (fgets(line, sizeof(line), src)) {
-        char id[20], plat[20];
-        if (sscanf(line, "%19[^|]|%19[^|]", id, plat) == 2 && strlen(id) > 0 && strlen(plat) > 0) {
-            fputs(line, temp);
-        }
-    }
-
-    fclose(src);
-    fclose(temp);
-    remove("FileManajemen/dataBus.txt");
-    rename("FileManajemen/temp.txt", "FileManajemen/dataBus.txt");
-
-    printf("File berhasil dibersihkan dari baris rusak.\n");
-}
-
-
 
 void printAllBus() {
     FILE *file = fopen("FileManajemen/dataBus.txt", "r");
@@ -578,48 +546,72 @@ void printAllBus() {
     fclose(file);
 }
 
-boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** rute) {
-    if (idx == nil) {
-        return false;
+boolean PreOrder(terminalTree P, address idx, char* tujuan) {
+    if (idx == nil) return false;
+
+    if (strcmp(P[idx].info, tujuan) == 0) {
+        return true; // Terminal ditemukan
     }
 
-    // Jika menemukan terminal tujuan, insert ke linked list
+    address child = P[idx].ps_fs;
+    while (child != nil) {
+        if (PreOrder(P, child, tujuan)) {
+            return true; // Terminal ditemukan di subtree
+        }
+        child = P[child].ps_nb;
+    }
+
+    return false; // Terminal tidak ditemukan
+}
+
+boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** rute, time_t waktuTujuan) {
+    static int offsetMenit = 0;
+
+    if (idx == nil) return false;
+
     if (strcmp(T[idx].info, tujuan) == 0) {
-        tambahRute(rute, T[idx].info);  // Insert first node tujuan
+        NodeRute* newNode = (NodeRute*)malloc(sizeof(NodeRute));
+        if (newNode == NULL) {
+            printf("Gagal alokasi memori untuk rute.\n");
+            return false;
+        }
+
+        strcpy(newNode->namaTerminal, T[idx].info);
+        struct tm tempWaktu = *localtime(&waktuTujuan);
+        tempWaktu.tm_min -= offsetMenit;  // dikurangi supaya makin atas makin awal waktunya
+        newNode->waktubrgkt = mktime(&tempWaktu);
+        newNode->next = NULL;
+
+        // Masukkan ke head linked list
+        newNode->next = *rute;
+        *rute = newNode;
+
+        offsetMenit += 40;  // Setiap naik ke parent, waktunya harus lebih awal
         return true;
     }
 
-    // Loop untuk cek semua anak (ps_fs dan seluruh ps_nb-nya)
     address child = T[idx].ps_fs;
     while (child != nil) {
-        if (PreOrderToLinkedList(T, child, tujuan, rute)) {
-            tambahRute(rute, T[idx].info);  // Masukkan parent jika rute ditemukan dalam subtree
+        if (PreOrderToLinkedList(T, child, tujuan, rute, waktuTujuan)) {
+            NodeRute* newNode = (NodeRute*)malloc(sizeof(NodeRute));
+            if (newNode == NULL) {
+                printf("Gagal alokasi memori untuk rute.\n");
+                return true;
+            }
+
+            strcpy(newNode->namaTerminal, T[idx].info);
+            struct tm tempWaktu = *localtime(&waktuTujuan);
+            tempWaktu.tm_min -= offsetMenit;  // tetap dikurangi
+            newNode->waktubrgkt = mktime(&tempWaktu);
+            newNode->next = *rute;
+            *rute = newNode;
+
+            offsetMenit += 40;
             return true;
         }
         child = T[child].ps_nb;
     }
 
-    // Kalau tidak ditemukan di subtree
     return false;
 }
 
-
-boolean PreOrder(terminalTree P, address idx, char* tujuan) {
-    if (idx == nil) {
-        return false;
-    }
-
-    if (strcmp(P[idx].info, tujuan) == 0) {
-        printf("Terminal ditemukan: %s\n", P[idx].info);
-        return true; // Terminal ditemukan
-        
-    }
-    // Cek anak pertama (first child)
-    if (PreOrder(P, P[idx].ps_fs, tujuan)) {
-        printf("Terminal ditemukan di anak pertama: %s\n", P[idx].info);
-        return true; // Terminal ditemukan di anak pertama
-    }
-    // Cek saudara berikutnya (next sibling)
-    return PreOrder(P, P[idx].ps_nb, tujuan);
-
-}

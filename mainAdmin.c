@@ -54,8 +54,7 @@ int main() {
                         case 3: {
                             char idBus[10];
                             printf("Masukkan ID Bus yang ingin diedit: ");
-                            scanf("%s", idBus);
-                            bersihkanDataBus();                        
+                            scanf("%s", idBus);                     
                             editBus(idBus);
                             break;
                         }
