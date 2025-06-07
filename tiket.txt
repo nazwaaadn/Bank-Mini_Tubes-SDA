@@ -1,1 +1,4 @@
 TK17492843Naira|Naira|Cilegon|2025-05-06 13:00|12|1|50000|confirmed
+TK17492845Naira|Naira|Dago|2025-06-09 13:00|12|1|50000|confirmed
+TK17492847Naira|Naira|Dago|2025-07-09 13:00|12|1|50000|confirmed
+TK17492854Naira|Naira|Simpang|2025-04-06 13:00|12|3|150000|confirmed

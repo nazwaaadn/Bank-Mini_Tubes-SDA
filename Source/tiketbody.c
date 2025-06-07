@@ -40,12 +40,12 @@ void muatDataBus() {
         // Hapus newline di akhir line
         line[strcspn(line, "\r\n")] = '\0';
 
-        int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%199[^|]|%5[^|]|%5[^|]",
-                                 idBus, platNomor, namaSupir, &kapasitas, &kelas, ruteStr, waktuBrk, waktuTba);
-        if (jumlahField != 8) {
-            printf("Format data bus salah: %s\n", line);
-            continue;  // Lewati baris yang rusak
-        }
+        // int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%199[^|]|%5[^|]|%5[^|]",
+        //                          idBus, platNomor, namaSupir, &kapasitas, &kelas, ruteStr, waktuBrk, waktuTba);
+        // if (jumlahField != 8) {
+        //     printf("Format data bus salah: %s\n", line);
+        //     continue;  // Lewati baris yang rusak
+        // }
 
         // Buat DataBus baru dan isi data
         DataBus bus;
@@ -259,6 +259,7 @@ void pesanTiket(NodeUser* user) {
     DataTiket tiketBaru;
     sprintf(tiketBaru.idTiket, "TK%ld", time(NULL));
     strcpy(tiketBaru.namaPenumpang, user->Info.nama);
+    strcpy(tiketBaru.awal, awal);
     strcpy(tiketBaru.tujuan, tujuan);     // berdasarkan input user
     strcpy(tiketBaru.jadwal, jadwalStr);  // berdasarkan input user
     tiketBaru.noKursi = rand() % selectedBus->Info.kapasitas + 1;
