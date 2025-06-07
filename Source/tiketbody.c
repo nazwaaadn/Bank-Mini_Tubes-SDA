@@ -91,10 +91,6 @@ void muatDataBus() {
 }
 
 //=====================================================================
-
-void timeToString(time_t waktu, char* buffer) {
-    strftime(buffer, 30, "%Y-%m-%d %H:%M", localtime(&waktu));
-}
 //=====================================================================
 
 NodeTiket *HeadTiket = NULL;
@@ -154,7 +150,6 @@ void cetakTiket(char idTiket[]) {
     printf("| Nama         : %-26s |\n", tiket->Info.namaPenumpang);
     printf("| Dari         : %-26s |\n", tiket->Info.awal); 
     printf("| Tujuan       : %-26s |\n", tiket->Info.tujuan);
-    printf("| Jadwal       : %-26s |\n", tiket->Info.jadwal);
     printf("| ID Bus       : %-26s |\n", tiket->bus ? tiket->bus->Info.idBus : "N/A");
     printf("| Jumlah Kursi : %-26d |\n", tiket->Info.jumlahKursi);
     printf("| Total Harga  : Rp%-24d |\n", tiket->Info.totalHarga);
@@ -187,12 +182,11 @@ void printAllTiket() {
     while (fgets(line, sizeof(line), f)) {
         DataTiket tiket;
 
-        sscanf(line, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%d|%d|%d|%s",
+        sscanf(line, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%d|%d|%d|%s",
             tiket.idTiket,
             tiket.namaPenumpang,
             tiket.awal,
             tiket.tujuan,
-            tiket.jadwal,
             tiket.idBus, 
             &tiket.noKursi,
             &tiket.jumlahKursi,
@@ -230,7 +224,6 @@ void printAllTiket() {
         printf("| Nama         : %-26s |\n", current->Info.namaPenumpang);
         printf("| Dari         : %-26s |\n", current->Info.awal); 
         printf("| Tujuan       : %-26s |\n", current->Info.tujuan);
-        printf("| Jadwal       : %-26s |\n", current->Info.jadwal);
         printf("| ID Bus       : %-26s |\n", current->Info.idBus ? current->bus->Info.idBus : "N/A");
         printf("| Jumlah Kursi : %-26d |\n", current->Info.jumlahKursi);
         printf("| Total Harga  : Rp%-24d |\n", current->Info.totalHarga);
@@ -262,14 +255,11 @@ void pesanTiket(NodeUser* user) {
     }
 
     char awal[50], tujuan[50], jadwalStr[25];
-    char idBus[10];
     struct tm tm_jadwal = {0};
     int jumlahKursi;
     int hargaPerKursi = 50000;
 
-    printf("Masukkan ID Bus (misal: Bus1): ");
-    scanf(" %[^\n]", idBus);
-    idBus[strcspn(idBus, "\n")] = '\0'; // Bersihkan newline
+    printf("=== PEMESANAN TIKET ===\n");
 
     printf("Masukkan Lokasi Awal (terminal)       : ");
     scanf(" %[^\n]", awal);
@@ -279,24 +269,67 @@ void pesanTiket(NodeUser* user) {
     scanf(" %[^\n]", tujuan);
     tujuan[strcspn(tujuan, "\n")] = '\0';
 
-    printf("Masukkan jadwal (YYYY-MM-DD HH:MM): ");
-    scanf(" %[^\n]", jadwalStr);
-    jadwalStr[strcspn(jadwalStr, "\n")] = '\0';
-
     printf("Jumlah kursi dipesan  : ");
     scanf("%d", &jumlahKursi);
 
-    // Cari bus berdasarkan ID
-    NodeBus* selectedBus = NULL;
     NodeBus* current = HeadBus;
+    NodeBus* busList[100]; // simpan pointer ke bus yang cocok
+    int count = 0;
+
+    printf("\nBus yang tersedia untuk rute %s -> %s:\n", awal, tujuan);
+    printf("---------------------------------------------------------------------------------------------------------\n");
+    printf("| ID Bus | Plat Nomor     | Nama Supir         | Terminal Awal      | Terminal Tujuan    | Kapasitas |\n");
+    printf("---------------------------------------------------------------------------------------------------------\n");
 
     while (current != NULL) {
-        printf("[DEBUG] Cek ID Bus: '%s'\n", current->Info.idBus);
-        if (strcmp(current->Info.idBus, idBus) == 0) {
-            selectedBus = current;
+        NodeRute* rute = current->Info.rute;
+
+        if (rute == NULL) {
+            current = current->next;
+            continue;
+        }
+
+        // Ambil terminal awal (node pertama)
+        char* terminalAwal = rute->namaTerminal;
+
+        // Ambil terminal tujuan (node terakhir)
+        NodeRute* last = rute;
+        while (last->next != NULL) {
+            last = last->next;
+        }
+        char* terminalTujuan = last->namaTerminal;
+
+        // Bandingkan dengan input
+        if (strcmp(terminalAwal, awal) == 0 && strcmp(terminalTujuan, tujuan) == 0) {
+            printf("| %-6s | %-15s | %-18s | %-18s | %-18s | %-9d |\n",
+                current->Info.idBus, current->Info.platNomor, current->Info.namaSupir,
+                terminalAwal, terminalTujuan, current->Info.kapasitas);
+
+            busList[count++] = current;
+        }
+
+        current = current->next;
+    }
+
+    if (count == 0) {
+        printf("Maaf, tidak ada bus untuk rute tersebut.\n");
+        return;
+    }
+
+    printf("---------------------------------------------------------------------------------------------------------\n");
+
+    // Pilih ID Bus
+    char idBus[10];
+    printf("Masukkan ID Bus yang ingin Anda pilih: ");
+    scanf(" %[^\n]", idBus);
+
+    // Cari bus berdasarkan ID
+    NodeBus* selectedBus = NULL;
+    for (int i = 0; i < count; i++) {
+        if (strcmp(busList[i]->Info.idBus, idBus) == 0) {
+            selectedBus = busList[i];
             break;
         }
-        current = current->next;
     }
 
     if (selectedBus == NULL) {
@@ -310,8 +343,7 @@ void pesanTiket(NodeUser* user) {
     strcpy(tiketBaru.namaPenumpang, user->Info.nama);
     strcpy(tiketBaru.awal, awal);
     strcpy(tiketBaru.tujuan, tujuan);     // berdasarkan input user
-    strcpy(tiketBaru.jadwal, jadwalStr);  // berdasarkan input user
-    strcpy(tiketBaru.idBus, "Bus05");         // ID Bus yang dipilih
+    strcpy(tiketBaru.idBus, idBus);         // ID Bus yang dipilih
     tiketBaru.noKursi = rand() % selectedBus->Info.kapasitas + 1;
     tiketBaru.jumlahKursi = jumlahKursi;
     tiketBaru.totalHarga = hargaPerKursi * jumlahKursi;
@@ -320,6 +352,9 @@ void pesanTiket(NodeUser* user) {
     insertTiket(tiketBaru, selectedBus);
     simpanTiketKeFile(tiketBaru);
     cetakTiket(tiketBaru.idTiket);
+
+    printf("Tiket berhasil dipesan untuk %s sebanyak %d kursi.\nTotal harga: %d\n",
+       selectedBus->Info.idBus, jumlahKursi, tiketBaru.totalHarga);
 }
 
 
@@ -384,11 +419,10 @@ void batalkanTiket(char idTiket[]) {
 
     NodeTiket* current = HeadTiket;
     while (current != NULL) {
-        fprintf(f, "%s|%s|%s|%s|%d|%d|%d|%s\n",
+        fprintf(f, "%s|%s|%s|%d|%d|%d|%s\n",
             current->Info.idTiket,
             current->Info.namaPenumpang,
             current->Info.tujuan,
-            current->Info.jadwal,
             current->Info.idBus,
             current->Info.noKursi,
             current->Info.jumlahKursi,
@@ -409,12 +443,11 @@ void simpanTiketKeFile(DataTiket tiket) {
         printf("Gagal membuka file tiket.txt\n");
         return;
     }
-    fprintf(f, "%s|%s|%s|%s|%s|%s|%d|%d|%d|%s\n",
+    fprintf(f, "%s|%s|%s|%s|%s|%d|%d|%d|%s\n",
         tiket.idTiket,
         tiket.namaPenumpang,
         tiket.awal,
         tiket.tujuan,
-        tiket.jadwal,
         tiket.idBus, 
         tiket.noKursi,
         tiket.jumlahKursi,

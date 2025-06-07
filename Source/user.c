@@ -88,6 +88,7 @@ void loginUser(char nama[], char password[]) {
                 currentUser = curr;
                 printf("Login berhasil. Selamat datang, %s!\n", nama);
                 afterLoginMenu(curr);
+                return;
             }
             curr = curr->next;
         }
@@ -116,6 +117,27 @@ void afterLoginMenu(NodeUser* user) {
 
         switch (pilihan) {
             case 1:
+                printf("+================================================================================+\n");
+                printf("|                           RUTE BUS TRANSJAKARTA                                |\n");
+                printf("+================================================================================+\n");
+                printf("| Rute 1: Dago -> Simpang Dago -> Ciumbuleuit -> Punclut -> Lembang              |\n");
+                printf("| Rute 2: Dago -> Simpang Dago -> Setiabudi -> Ledeng -> Parongpong              |\n");
+                printf("| Rute 3: Dago -> Pasteur -> Sukajadi -> Pajajaran -> Cicendo -> Cimindi         |\n");
+                printf("|         -> Cimahi Tengah -> Cimahi Utara -> KBP                                |\n");
+                printf("| Rute 4: Dago -> Gasibu -> Cibeunying Kaler -> Antapani -> Ujung Berung         |\n");
+                printf("|         -> Cibiru -> Cileunyi -> Jatinangor                                    |\n");
+                printf("| Rute 5: Dago -> Gedung Sate -> Cibeunying Kidul -> Kiara Condong               |\n");
+                printf("|         -> Arcamanik -> Cinambo                                                |\n");
+                printf("| Rute 6: Dago -> Tamansari -> Balubur -> Tamansari Bawah -> Jalan Asia Afrika   |\n");
+                printf("|         -> Sumur Bandung -> Regol -> Buah Batu -> Bojong Soang                 |\n");
+                printf("|         -> Baleendah -> Dayeuhkolot -> Banjaran                                |\n");
+                printf("| Rute 7: Dago -> Tamansari -> Balubur -> Tamansari Bawah -> Jalan Asia Afrika   |\n");
+                printf("|         -> Moh Toha -> Soreang                                                 |\n");
+                printf("| Rute 8: Dago -> Tamansari -> Balubur -> Tamansari Bawah -> Jalan Asia Afrika   |\n");
+                printf("|         -> Moh Toha -> Katapang -> Ciparay                                     |\n");
+                printf("+================================================================================+\n");
+
+
                 pesanTiket(user);  // Call ticket order function
                 break;
             case 2:

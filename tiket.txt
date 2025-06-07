@@ -1,6 +1,1 @@
-TK17492875Naira|Naira|Bandung|Simpang|2025-09-09 13:00|0úýEþ|12|1|50000|confirmed
-TK17492876Naira|Naira|Dago|Simpang|2025-09-24 14:00|0úýEþ|12|2|100000|confirmed
-TK17492877Tsuki|Tsuki|Bandung|Dago|2025-04-04 13:00|0úýEþ|18|2|100000|confirmed
-TK17492879Tsuki|Tsuki|Bandung|Cimahi|2025-06-07 13:00|Cimahi|12|1|50000|confirmed
-TK1749289025|Naira|Bandung|Dago|2025-09-09 13:00|25|12|1|50000|confirmed
-TK17492893Bus05|Naira|Bandung|Dago|2025-09-04 13:00|Bus05|12|1|50000|confirmed
+TK17493051Bus05|Naira|Dago|Ledeng|Bus05|12|1|50000|confirmed

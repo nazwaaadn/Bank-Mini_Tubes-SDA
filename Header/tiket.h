@@ -16,7 +16,6 @@ typedef struct {
     char namaPenumpang[50];    // Nama pemilik akun
     char awal[50];             // Lokasi awal (dari) 
     char tujuan[50];           // Tujuan perjalanan
-    char jadwal[20];           // Waktu/jam keberangkatan
     int noKursi;               // Nomor kursi
     int jumlahKursi;           // Jumlah kursi (jika group)
     int totalHarga;            // Total harga tiket
