@@ -4,7 +4,7 @@
 
 #include <limits.h>
 #include <malloc.h>
-#include "STACK.h"
+#include "stack.h"
 #include "terminal.h"
 
 addressStack AlokasiStack(nbtree X) {

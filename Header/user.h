@@ -36,6 +36,8 @@ void logoutUser();
 
 // tambahan
 //
+void afterLoginMenu(NodeUser* user);
+void pesanTiket(NodeUser* user);
 void loadUsersFromFile(const char* filename);
 void saveUsersToFile(const char* filename);
 int isUsernameTaken(const char* nama);
