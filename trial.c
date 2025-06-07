@@ -1,5 +1,4 @@
 #include "../Header/bus.h"
-#include "../Header/terminal.h"
 #include "trial.h"
 #include <stdio.h>
 #include <string.h>
@@ -19,7 +18,7 @@ void bacaDataBus(char* filename, DataBus buses[], int* busCount) {
         if (line[0] == '*' || line[0] == '\n') continue;
 
         // Komponen data dari file
-        char idBus[10], platNomor[15], namaSupir[50], rute[255], strKeberangkatan[10], strKedatangan[10];
+        char idBus[10], platNomor[15], namaSupir[50], rute[512], strKeberangkatan[10], strKedatangan[10];
         int kapasitas;
         char kelas;
 

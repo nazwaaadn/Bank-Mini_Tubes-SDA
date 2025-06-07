@@ -1,6 +1,12 @@
-ansma|saj|sak|20|C|Dago->Pasteur->Sukajadi|09:30|09:30
-Bus05|AJ82978K|Jay|30|C|Dago->Simpang Dago->Setiabudi->Ledeng|15:20|15:20
-ajsk|absma|saf|40|B|Pasteur->Sukajadi->Pajajaran->Cicendo->Cimindi|04:30|04:30
-bus111|ajn|ab|30|A|Pasteur->Sukajadi->Pajajaran->Cicendo->Cimindi->Cimahi Tengah->Cimahi Utara->KBP|09:30|09:30
-ads|sb|aj|60|A|Dago->Gasibu->Cibeunying Kaler->Antapani->Ujungberung|10:30|10:30
-aj|sg|abs|30|C|Dago (09:00)->Simpang Dago (09:40)->Setiabudi (10:20)->Ledeng (11:00)|09:00|11:00
+Bus01|D9387IJ|Panji|50|A|Dago (07:00)->Gasibu (07:40)->Cibeunying Kaler (08:20)->Antapani (09:00)->Ujungberung (09:40)->Cibiru (10:20)->Cibiru (10:20)->Ujungberung (11:00)->Antapani (11:40)->Cibeunying Kaler (12:20)->Gasibu (13:00)->Dago (13:40)|07:00|10:20
+Bus02|A8972HU|Candra|30|C|Dago (07:00)->Simpang Dago (07:40)->Ciumbuleuit (08:20)->Punclut (09:00)->Lembang (09:40)->Lembang (09:40)->Punclut (10:20)->Ciumbuleuit (11:00)->Simpang Dago (11:40)->Dago (12:20)|07:00|09:40
+Bus03|G8271KY|Anton|50|C|Dago (07:00)->Simpang Dago (07:40)->Setiabudi (08:20)->Ledeng (09:00)->Parongpong (09:40)->Parongpong (09:40)->Ledeng (10:20)->Setiabudi (11:00)->Simpang Dago (11:40)->Dago (12:20)|07:00|09:40
+Bus04|B9872TR|Paul|50|A|Dago (07:00)->Pasteur (07:40)->Sukajadi (08:20)->Pajajaran (09:00)->Cicendo (09:40)->Cimindi (10:20)->Cimahi Tengah (11:00)->Cimahi Utara (11:40)->KBP (12:20)->KBP (12:20)->Cimahi Utara (13:00)->Cimahi Tengah (13:40)->Cimindi (14:20)->Cicendo (15:00)->Pajajaran (15:40)->Sukajadi (16:20)->Pasteur (17:00)->Dago (17:40)|07:00|12:20
+Bus05|D0902RT|Toni|50|A|Dago (07:20)->Gasibu (08:00)->Cibeunying Kaler (08:40)->Antapani (09:20)->Ujungberung (10:00)->Cibiru (10:40)->Cibiru (10:40)->Ujungberung (11:20)->Antapani (12:00)->Cibeunying Kaler (12:40)->Gasibu (13:20)->Dago (14:00)|07:20|10:40
+Bus06|D2939FR|Bob|40|B|Dago (07:20)->Simpang Dago (08:00)->Ciumbuleuit (08:40)->Punclut (09:20)->Lembang (10:00)->Lembang (10:00)->Punclut (10:40)->Ciumbuleuit (11:20)->Simpang Dago (12:00)->Dago (12:40)|07:20|10:00
+Bus07|B8382UJ|Budi|40|B|Dago (07:20)->Simpang Dago (08:00)->Setiabudi (08:40)->Ledeng (09:20)->Parongpong (10:00)->Parongpong (10:00)->Ledeng (10:40)->Setiabudi (11:20)->Simpang Dago (12:00)->Dago (12:40)|07:20|10:00
+Bus08|D7267KH|Rio|50|A|Dago (07:20)->Pasteur (08:00)->Sukajadi (08:40)->Pajajaran (09:20)->Cicendo (10:00)->Cimindi (10:40)->Cimahi Tengah (11:20)->Cimahi Utara (12:00)->KBP (12:40)->KBP (12:40)->Cimahi Utara (13:20)->Cimahi Tengah (14:00)->Cimindi (14:40)->Cicendo (15:20)->Pajajaran (16:00)->Sukajadi (16:40)->Pasteur (17:20)->Dago (18:00)|07:20|12:40
+Bus09|A9187KU|Fajar|40|B|Dago (07:40)->Gasibu (08:20)->Cibeunying Kaler (09:00)->Antapani (09:40)->Ujungberung (10:20)->Cibiru (11:00)->Cibiru (11:00)->Ujungberung (11:40)->Antapani (12:20)->Cibeunying Kaler (13:00)->Gasibu (13:40)->Dago (14:20)|07:40|11:00
+Bus10|B8278KS|Gio|40|B|Dago (07:40)->Simpang Dago (08:20)->Ciumbuleuit (09:00)->Punclut (09:40)->Lembang (10:20)->Lembang (10:20)->Punclut (11:00)->Ciumbuleuit (11:40)->Simpang Dago (12:20)->Dago (13:00)|07:40|10:20
+Bus11|D5245JD|Wira|50|A|Dago (07:40)->Simpang Dago (08:20)->Setiabudi (09:00)->Ledeng (09:40)->Parongpong (10:20)->Parongpong (10:20)->Ledeng (11:00)->Setiabudi (11:40)->Simpang Dago (12:20)->Dago (13:00)|07:40|10:20
+Bus12|D2655TW|Edi|50|B|Dago (07:40)->Pasteur (08:20)->Sukajadi (09:00)->Pajajaran (09:40)->Cicendo (10:20)->Cimindi (11:00)->Cimahi Tengah (11:40)->Cimahi Utara (12:20)->KBP (13:00)->KBP (13:00)->Cimahi Utara (13:40)->Cimahi Tengah (14:20)->Cimindi (15:00)->Cicendo (15:40)->Pajajaran (16:20)->Sukajadi (17:00)->Pasteur (17:40)->Dago (18:20)|07:40|13:00

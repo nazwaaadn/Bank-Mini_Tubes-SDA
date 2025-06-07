@@ -64,9 +64,7 @@ int main() {
                             break;
 
                         case 5:
-                            terminalTree T;
-                            CreateTerminal(T); 
-                            PreOrder(T, 0, ""); // Tampilkan semua bus
+                            printf("Keluar dari menu manajemen bus...\n");
                             break;
 
                         default:

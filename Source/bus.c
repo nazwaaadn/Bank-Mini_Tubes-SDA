@@ -421,23 +421,30 @@ void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize) {
 }
 
 // Fungsi baru: konversi dari string ke linked list rute
-NodeRute* stringToRute(const char* str) {
+// Pseudocode for stringToRute function fix
+NodeRute* stringToRute(char* rute) {
     NodeRute* head = NULL;
     NodeRute* tail = NULL;
-    char buffer[255];
-    strcpy(buffer, str);
-    char* token = strtok(buffer, "->");
-    while (token != NULL) {
+
+    char* terminal = strtok(rute, "->");
+    while (terminal != NULL) {
+        // Extract terminal name and time
+        char terminalName[100];
+        char time[10];
+        sscanf(terminal, "%[^ ] %s", terminalName, time);
+
         NodeRute* newNode = (NodeRute*)malloc(sizeof(NodeRute));
-        strcpy(newNode->namaTerminal, token);
+        strcpy(newNode->namaTerminal, terminalName);
         newNode->next = NULL;
-        if (head == NULL) {
+
+        if (tail == NULL) {
             head = newNode;
         } else {
             tail->next = newNode;
         }
         tail = newNode;
-        token = strtok(NULL, "->");
+
+        terminal = strtok(NULL, "->");
     }
     return head;
 }
@@ -459,13 +466,8 @@ void saveSingleBusToFile(DataBus bus) {
         return;
     }
 
-    struct tm *wktBrk = localtime(&bus.keberangkatan);
-    struct tm *wktTba = localtime(&bus.kedatangan);
-    if (!wktBrk || !wktTba) {
-        printf("❌ Waktu tidak valid.\n");
-        fclose(file);
-        return;
-    }
+    struct tm wktBrkStruct = *localtime(&bus.keberangkatan);
+    struct tm wktTbaStruct = *localtime(&bus.kedatangan);
 
     // Menyusun rute dengan waktu keberangkatan terminal
     char ruteStr[1024] = "";
@@ -490,8 +492,8 @@ void saveSingleBusToFile(DataBus bus) {
         bus.kapasitas,
         bus.kelas,
         ruteStr,
-        wktBrk->tm_hour, wktBrk->tm_min,
-        wktTba->tm_hour, wktTba->tm_min
+        wktBrkStruct.tm_hour, wktBrkStruct.tm_min,
+        wktTbaStruct.tm_hour, wktTbaStruct.tm_min
     );
 
     fclose(file);
@@ -565,34 +567,60 @@ boolean PreOrder(terminalTree P, address idx, char* tujuan) {
 }
 
 boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** rute, time_t waktuTujuan) {
-    static int offsetMenit = 0;
+    static int offsetPergi = 0;
+    static int offsetPulang = 0;
+    static boolean found = false;
 
     if (idx == nil) return false;
 
+    // Jika terminal tujuan ditemukan
     if (strcmp(T[idx].info, tujuan) == 0) {
+        // Tambahkan node untuk perjalanan pergi
         NodeRute* newNode = (NodeRute*)malloc(sizeof(NodeRute));
         if (newNode == NULL) {
             printf("Gagal alokasi memori untuk rute.\n");
             return false;
         }
 
+        // Salin nama terminal dan hitung waktu keberangkatan untuk pergi
         strcpy(newNode->namaTerminal, T[idx].info);
         struct tm tempWaktu = *localtime(&waktuTujuan);
-        tempWaktu.tm_min -= offsetMenit;  // dikurangi supaya makin atas makin awal waktunya
+        tempWaktu.tm_min -= offsetPergi;  // Mengurangi waktu untuk setiap terminal
         newNode->waktubrgkt = mktime(&tempWaktu);
-        newNode->next = NULL;
-
-        // Masukkan ke head linked list
         newNode->next = *rute;
         *rute = newNode;
 
-        offsetMenit += 40;  // Setiap naik ke parent, waktunya harus lebih awal
+        offsetPergi += 40;  // Menambah offset untuk terminal berikutnya
+        found = true;
+
+        // Sekarang buat rute balik dari terminal ini
+        NodeRute* balikNode = (NodeRute*)malloc(sizeof(NodeRute));
+        if (balikNode == NULL) {
+            printf("Gagal alokasi memori untuk rute balik.\n");
+            return true;  // Rute pergi sudah selesai, lanjutkan
+        }
+
+        // Salin nama terminal untuk rute balik
+        strcpy(balikNode->namaTerminal, T[idx].info);
+        struct tm waktuBalik = *localtime(&waktuTujuan);
+        waktuBalik.tm_min += offsetPulang;  // Menambahkan waktu untuk perjalanan balik
+        balikNode->waktubrgkt = mktime(&waktuBalik);
+        balikNode->next = NULL;
+
+        // Taruh di ujung list
+        NodeRute* temp = *rute;
+        while (temp->next != NULL) temp = temp->next;
+        temp->next = balikNode;
+
+        offsetPulang += 40;  // Menambah offset untuk rute balik selanjutnya
         return true;
     }
 
+    // Traversal untuk mencari terminal tujuan pada pohon
     address child = T[idx].ps_fs;
     while (child != nil) {
         if (PreOrderToLinkedList(T, child, tujuan, rute, waktuTujuan)) {
+            // Tambahkan node untuk perjalanan pergi
             NodeRute* newNode = (NodeRute*)malloc(sizeof(NodeRute));
             if (newNode == NULL) {
                 printf("Gagal alokasi memori untuk rute.\n");
@@ -601,12 +629,35 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
 
             strcpy(newNode->namaTerminal, T[idx].info);
             struct tm tempWaktu = *localtime(&waktuTujuan);
-            tempWaktu.tm_min -= offsetMenit;  // tetap dikurangi
+            tempWaktu.tm_min -= offsetPergi;
             newNode->waktubrgkt = mktime(&tempWaktu);
             newNode->next = *rute;
             *rute = newNode;
 
-            offsetMenit += 40;
+            offsetPergi += 40;
+
+            // Tambahkan node balik jika terminal tujuan sudah ditemukan
+            if (found) {
+                NodeRute* balikNode = (NodeRute*)malloc(sizeof(NodeRute));
+                if (balikNode == NULL) {
+                    printf("Gagal alokasi memori untuk rute balik.\n");
+                    return true;
+                }
+
+                strcpy(balikNode->namaTerminal, T[idx].info);
+                struct tm waktuBalik = *localtime(&waktuTujuan);
+                waktuBalik.tm_min += offsetPulang;
+                balikNode->waktubrgkt = mktime(&waktuBalik);
+                balikNode->next = NULL;
+
+                // Taruh di ujung list
+                NodeRute* temp = *rute;
+                while (temp->next != NULL) temp = temp->next;
+                temp->next = balikNode;
+
+                offsetPulang += 40;
+            }
+
             return true;
         }
         child = T[child].ps_nb;
@@ -614,4 +665,3 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
 
     return false;
 }
-
