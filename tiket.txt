@@ -1,1 +1,6 @@
-TK17493051Bus05|Naira|Dago|Ledeng|Bus05|12|1|50000|confirmed
+1|Naira|Ledeng|Bus05|12|1|50000|cancelled
+2|Naira|Pasteur|KBP|bus111|12|1|50000|confirmed
+3|Naira|Dago|Gasibu|ads|42|1|50000|confirmed
+4|Naira|Pasteur|Sukajadi|bus111|18|2|100000|confirmed
+5|Naira|Dago|Ledeng|Bus05|12|2|100000|confirmed
+6|Tsuki|Sukajadi|Cimindi|ajsk|2|3|150000|confirmed

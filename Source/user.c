@@ -99,10 +99,12 @@ void loginUser(char nama[], char password[]) {
 
 void afterLoginMenu(NodeUser* user) {
     int pilihan;
-    char id[20];
+    int idTiket;
+
+
     do {
         printf("\n+=======================================+\n");
-        printf("|  === MENU PELANGGAN - %s === |\n", user->Info.nama);
+        printf("| ===   MENU PELANGGAN - %-10s === |\n", user->Info.nama);
         printf("+=======================================+\n");
         printf("| 1. Pesan Tiket                        |\n");
         printf("| 2. Cetak Tiket                        |\n");
@@ -114,7 +116,6 @@ void afterLoginMenu(NodeUser* user) {
         printf(" Pilih menu (0-5): ");
         scanf("%d", &pilihan);
         getchar(); // newline handler
-
         switch (pilihan) {
             case 1:
                 printf("+================================================================================+\n");
@@ -137,23 +138,27 @@ void afterLoginMenu(NodeUser* user) {
                 printf("|         -> Moh Toha -> Katapang -> Ciparay                                     |\n");
                 printf("+================================================================================+\n");
 
-
+                
                 pesanTiket(user);  // Call ticket order function
                 break;
             case 2:
-                printf("Masukkan ID Tiket: ");
-                scanf(" %[^\n]", id);
-                cetakTiket(id);
+                printf("Masukkan ID Tiket yang ingin dicetak: ");
+                scanf("%d", &idTiket);
+                while (getchar() != '\n'); // Bersihkan buffer input
+                cetakTiket(idTiket, user->Info.nama);
                 break;
             case 3:
                 printf("Masukkan ID Tiket yang ingin dihapus: ");
-                scanf(" %[^\n]", id);
-                deleteTiketByID(id);
+                scanf("%d\n", &idTiket);
+                while (getchar() != '\n');
+                deleteTiketByID(idTiket);
                 break;
             case 4:
+                printAllTiket(); // Pastikan tiket sudah dimuat ke memori
                 printf("Masukkan ID Tiket yang ingin dibatalkan: ");
-                scanf(" %[^\n]", id);
-                batalkanTiket(id);
+                scanf("%d", &idTiket);
+                while (getchar() != '\n'); // Bersihkan buffer
+                batalkanTiket(idTiket, user->Info.nama);
                 break;
             case 5:
                 printAllTiket();
