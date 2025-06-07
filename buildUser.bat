@@ -1,2 +1,2 @@
-gcc -IHeader mainUser.c desain.c Source/user.c Source/bus.c Source/tiketbody.c Source/terminal.c -o mainUser.exe
+gcc -IHeader mainUser.c Source/user.c Source/tiketbody.c Source/bus.c Source/terminal.c Source/desain.c -o mainUser.exe
 pause
