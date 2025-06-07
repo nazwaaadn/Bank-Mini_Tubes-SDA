@@ -3,6 +3,7 @@
 #include "user.h"
 #include "bus.h"
 #include "desain.h"
+#include "tiket.h"
 
 int main() {
     SplashScreenUser();  // Tampilkan tampilan awal Translibe

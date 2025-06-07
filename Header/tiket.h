@@ -39,9 +39,16 @@ void insertTiket(DataTiket tiketBaru, struct NodeBus* bus);          // Menambah
 void editTiketByID(char idTiket[], DataTiket tiketBaru);             // Mengedit tiket berdasarkan ID
 void printAllTiket();                                                // Menampilkan semua tiket
 NodeTiket* searchTiketByID(char idTiket[]);                          // Mencari tiket berdasarkan ID
+
+// void pesanTiket(NodeUser* user);                                // Simulasi pemesanan tiket oleh user
+
 int deleteTiketByID(char idTiket[]);                                 // Menghapus tiket berdasarkan ID
 void deleteAllTiket();                                               // Menghapus semua tiket
 void cetakTiket(char idTiket[]);                                     // Mencetak (menampilkan) detail tiket
 void batalkanTiket(char idTiket[]);                                  // Mengubah status tiket jadi "cancelled" & mengembalikan kursi
+
+void simpanTiketKeFile(DataTiket tiket);                                  // Menyimpan tiket ke file
+void timeToString(time_t waktu, char* buffer);                            // Mengonversi waktu ke string
+
 
 #endif

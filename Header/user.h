@@ -40,4 +40,10 @@ void loadUsersFromFile(const char* filename);
 void saveUsersToFile(const char* filename);
 int isUsernameTaken(const char* nama);
 
+//Tambahan Naira
+void afterLoginMenu(NodeUser* user);
+void pesanTiket(NodeUser* user);                                     // Simulasi pemesanan tiket oleh user !!!!
+NodeUser* findUser(char username[], char password[]);
+
+
 #endif

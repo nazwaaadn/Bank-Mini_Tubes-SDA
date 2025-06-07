@@ -1,9 +1,12 @@
 #include "user.h"
+#include "tiket.h"
+#include "bus.h"
+#include "desain.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-const char* FileUser = "../FileManajemen/userDatabase.txt";
+const char* FileUser = "userDatabase.txt";
 
 
 NodeUser *HeadUser = NULL;
@@ -84,12 +87,76 @@ void loginUser(char nama[], char password[]) {
             if (strcmp(curr->Info.nama, nama) == 0 && strcmp(curr->Info.password, password) == 0) {
                 currentUser = curr;
                 printf("Login berhasil. Selamat datang, %s!\n", nama);
-                return;
+                afterLoginMenu(curr);
             }
             curr = curr->next;
         }
         printf("Login gagal. Nama atau password salah.\n");
     }
+
+//Tambahan dari Naira buat ticket ==========================================
+
+void afterLoginMenu(NodeUser* user) {
+    int pilihan;
+    char id[20];
+    do {
+        printf("\n+=======================================+\n");
+        printf("|  === MENU PELANGGAN - %s === |\n", user->Info.nama);
+        printf("+=======================================+\n");
+        printf("| 1. Pesan Tiket                        |\n");
+        printf("| 2. Cetak Tiket                        |\n");
+        printf("| 3. Hapus Tiket                        |\n");
+        printf("| 4. Batalkan Tiket                     |\n");
+        printf("| 5. Tampilkan Semua Tiket              |\n");
+        printf("| 0. Keluar                             |\n");
+        printf("+=======================================+\n");
+        printf(" Pilih menu (0-5): ");
+        scanf("%d", &pilihan);
+        getchar(); // newline handler
+
+        switch (pilihan) {
+            case 1:
+                pesanTiket(user);  // Call ticket order function
+                break;
+            case 2:
+                printf("Masukkan ID Tiket: ");
+                scanf(" %[^\n]", id);
+                cetakTiket(id);
+                break;
+            case 3:
+                printf("Masukkan ID Tiket yang ingin dihapus: ");
+                scanf(" %[^\n]", id);
+                deleteTiketByID(id);
+                break;
+            case 4:
+                printf("Masukkan ID Tiket yang ingin dibatalkan: ");
+                scanf(" %[^\n]", id);
+                batalkanTiket(id);
+                break;
+            case 5:
+                printAllTiket();
+                break;
+            case 0:
+                printf("Terima kasih telah menggunakan layanan Translibe!\n");
+                break;
+            default:
+                printf("Pilihan tidak valid.\n");
+        }
+    } while (pilihan != 0);
+}
+
+NodeUser* findUser(char username[], char password[]) {
+    NodeUser* current = HeadUser;
+    while (current != NULL) {
+        if (strcmp(current->Info.nama, username) == 0 &&
+            strcmp(current->Info.password, password) == 0) {
+            return current;
+        }
+        current = current->next;
+    }
+    return NULL;
+}
+//==========================================================================
 
 
 void Login() {
