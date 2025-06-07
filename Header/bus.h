@@ -14,6 +14,7 @@
 
 typedef struct NodeRute {
     char namaTerminal[50];
+    time_t waktubrgkt; 
     struct NodeRute* next;
 } NodeRute;
 // Struktur data utama untuk satu bus
@@ -54,12 +55,11 @@ void printAllBus();
 NodeBus* searchBusByID(char idBus[]);
 void deleteBus(char idBus[]);
 void saveSingleBusToFile(DataBus bus);
-boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** rute);
+boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** headRute, time_t waktuTujuan);
 void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize);
 NodeRute* stringToRute(const char* str); // Fungsi baru untuk konversi string ke linked list rute
 void loadAllBusFromFile(); // Fungsi untuk memuat semua bus dari file
 void bersihkanDataBus(); // Fungsi untuk membersihkan data bus
 boolean PreOrder(terminalTree P, address idx, char* tujuan);
-
 
 #endif
