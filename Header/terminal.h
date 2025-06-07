@@ -16,6 +16,7 @@ typedef struct {
 typedef nbtree terminalTree[jml_maks+1];
 
 void CreateTerminal(terminalTree X);
+void tampilkanTerminal(terminalTree T);
 // boolean PreOrder (terminalTree P, address idx, char* tujuan);
 /* Traversal PreOrder */
 /* IS : P terdefinisi */
