@@ -604,3 +604,22 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
 }
 
 
+boolean PreOrder(terminalTree P, address idx, char* tujuan) {
+    if (idx == nil) {
+        return false;
+    }
+
+    if (strcmp(P[idx].info, tujuan) == 0) {
+        printf("Terminal ditemukan: %s\n", P[idx].info);
+        return true; // Terminal ditemukan
+        
+    }
+    // Cek anak pertama (first child)
+    if (PreOrder(P, P[idx].ps_fs, tujuan)) {
+        printf("Terminal ditemukan di anak pertama: %s\n", P[idx].info);
+        return true; // Terminal ditemukan di anak pertama
+    }
+    // Cek saudara berikutnya (next sibling)
+    return PreOrder(P, P[idx].ps_nb, tujuan);
+
+}

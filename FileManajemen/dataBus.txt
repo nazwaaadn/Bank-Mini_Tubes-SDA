@@ -3,4 +3,3 @@ Bus05|AJ82978K|Jay|30|C|Dago->Simpang Dago->Setiabudi->Ledeng|15:20|15:20
 ajsk|absma|saf|40|B|Pasteur->Sukajadi->Pajajaran->Cicendo->Cimindi|04:30|04:30
 bus111|ajn|ab|30|A|Pasteur->Sukajadi->Pajajaran->Cicendo->Cimindi->Cimahi Tengah->Cimahi Utara->KBP|09:30|09:30
 ads|sb|aj|60|A|Dago->Gasibu->Cibeunying Kaler->Antapani->Ujungberung|10:30|10:30
-*||ÿÿÿÿÿÿÿ)|50|C|Dago->Pasteur|09:40|09:40
