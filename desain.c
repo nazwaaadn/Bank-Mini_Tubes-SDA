@@ -48,16 +48,11 @@ void AdminMenu()
     printf("===================================\n");
     printf("|            MENU ADMIN           |\n");
     printf("===================================\n");
-    printf("1. Lihat Bus di Setiap Terminal\n");
+    printf("1. Manajemen Bus\n");
     printf("2. Release Bus dari Terminal\n");
-    printf("3. Manajemen Bus\n");
-    printf("4. Atur Rute Bus yang Telah Kembali\n");
-    printf("5. Lihat Data Tiket Pelanggan\n");
-    printf("6. Laporan Perjalanan Bus\n");
-    printf("7. Manajemen Terminal\n");
-    printf("8. Manajemen Akun Pelanggan\n");
-    printf("9. Riwayat Transaksi Tiket\n");
-    printf("10. Keluar\n");
+    printf("3. Lihat Terminal\n");
+    printf("4. Riwayat Transaksi Tiket\n");
+    printf("5. Keluar\n");
     printf("===================================\n");
     printf("Masukkan pilihan Anda: ");
 }
@@ -86,7 +81,6 @@ void ManajemenBus()
     printf("4. Lihat Daftar Bus\n");
     printf("5. Kembali ke Menu Utama\n");
     printf("===============================================\n");
-    printf("Masukkan pilihan Anda: ");
 }
 
 // void LihatRiwayat()
