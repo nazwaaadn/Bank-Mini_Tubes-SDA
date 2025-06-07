@@ -12,6 +12,7 @@
 // Struktur Tiket
 typedef struct {
     char idTiket[10];          // ID unik tiket
+    char idBus[20];            // ID Bus string
     char namaPenumpang[50];    // Nama pemilik akun
     char awal[50];             // Lokasi awal (dari) 
     char tujuan[50];           // Tujuan perjalanan

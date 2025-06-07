@@ -40,8 +40,8 @@ void muatDataBus() {
         // Hapus newline di akhir line
         line[strcspn(line, "\r\n")] = '\0';
 
-        // int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%199[^|]|%5[^|]|%5[^|]",
-        //                          idBus, platNomor, namaSupir, &kapasitas, &kelas, ruteStr, waktuBrk, waktuTba);
+        int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%199[^|]|%5[^|]|%5[^|]",
+                                 idBus, platNomor, namaSupir, &kapasitas, &kelas, ruteStr, waktuBrk, waktuTba);
         // if (jumlahField != 8) {
         //     printf("Format data bus salah: %s\n", line);
         //     continue;  // Lewati baris yang rusak
@@ -167,31 +167,80 @@ void cetakTiket(char idTiket[]) {
 
 
 void printAllTiket() {
+    // Load tickets from file before printing
+    FILE* f = fopen("tiket.txt", "r");
+    if (!f) {
+        printf("Gagal membuka file tiket.txt\n");
+        return;
+    }
+
+    // Clear existing list if necessary (optional safety)
+    NodeTiket* current = HeadTiket;
+    while (current) {
+        NodeTiket* temp = current;
+        current = current->next;
+        free(temp);
+    }
+    HeadTiket = NULL;
+
+    char line[512];
+    while (fgets(line, sizeof(line), f)) {
+        DataTiket tiket;
+
+        sscanf(line, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%d|%d|%d|%s",
+            tiket.idTiket,
+            tiket.namaPenumpang,
+            tiket.awal,
+            tiket.tujuan,
+            tiket.jadwal,
+            tiket.idBus, 
+            &tiket.noKursi,
+            &tiket.jumlahKursi,
+            &tiket.totalHarga,
+            tiket.status
+        );
+
+        NodeTiket* newNode = (NodeTiket*)malloc(sizeof(NodeTiket));
+        if (!newNode) {
+            printf("Gagal mengalokasikan memori untuk tiket.\n");
+            continue;
+        }
+
+        newNode->Info = tiket;
+        newNode->bus = NULL; // ID Bus info not included in file
+        newNode->next = HeadTiket;
+        HeadTiket = newNode;
+    }
+
+    fclose(f);
+
+    // Now print all loaded tickets
     if (isTiketListEmpty()) {
         printf("Tidak ada tiket yang tersedia.\n");
         return;
     }
 
-    NodeTiket* current = HeadTiket;
+    current = HeadTiket;
     printf("\n=== DAFTAR SEMUA TIKET ===\n");
     while (current != NULL) {
-		printf("\n+===========================================+\n");
-		printf("|          TIKET BUS TRANSJAKARTA           |\n");
-		printf("+===========================================+\n");
+        printf("\n+===========================================+\n");
+        printf("|          TIKET BUS TRANSJAKARTA           |\n");
+        printf("+===========================================+\n");
         printf("| ID Tiket     : %-26s |\n", current->Info.idTiket);
         printf("| Nama         : %-26s |\n", current->Info.namaPenumpang);
         printf("| Dari         : %-26s |\n", current->Info.awal); 
         printf("| Tujuan       : %-26s |\n", current->Info.tujuan);
         printf("| Jadwal       : %-26s |\n", current->Info.jadwal);
-        printf("| ID Bus       : %-26s |\n", current->bus ? current->bus->Info.idBus : "N/A");
+        printf("| ID Bus       : %-26s |\n", current->Info.idBus ? current->bus->Info.idBus : "N/A");
         printf("| Jumlah Kursi : %-26d |\n", current->Info.jumlahKursi);
         printf("| Total Harga  : Rp%-24d |\n", current->Info.totalHarga);
         printf("| Status       : %-26s |\n", current->Info.status);
-		printf("+===========================================+\n");
-		
+        printf("+===========================================+\n");
+        
         current = current->next;
     }
 }
+
 
 
 NodeTiket* searchTiketByID(char idTiket[]) {
@@ -262,6 +311,7 @@ void pesanTiket(NodeUser* user) {
     strcpy(tiketBaru.awal, awal);
     strcpy(tiketBaru.tujuan, tujuan);     // berdasarkan input user
     strcpy(tiketBaru.jadwal, jadwalStr);  // berdasarkan input user
+    strcpy(tiketBaru.idBus, "Bus05");         // ID Bus yang dipilih
     tiketBaru.noKursi = rand() % selectedBus->Info.kapasitas + 1;
     tiketBaru.jumlahKursi = jumlahKursi;
     tiketBaru.totalHarga = hargaPerKursi * jumlahKursi;
@@ -339,6 +389,7 @@ void batalkanTiket(char idTiket[]) {
             current->Info.namaPenumpang,
             current->Info.tujuan,
             current->Info.jadwal,
+            current->Info.idBus,
             current->Info.noKursi,
             current->Info.jumlahKursi,
             current->Info.totalHarga,
@@ -358,12 +409,13 @@ void simpanTiketKeFile(DataTiket tiket) {
         printf("Gagal membuka file tiket.txt\n");
         return;
     }
-
-    fprintf(f, "%s|%s|%s|%s|%d|%d|%d|%s\n",
+    fprintf(f, "%s|%s|%s|%s|%s|%s|%d|%d|%d|%s\n",
         tiket.idTiket,
         tiket.namaPenumpang,
+        tiket.awal,
         tiket.tujuan,
         tiket.jadwal,
+        tiket.idBus, 
         tiket.noKursi,
         tiket.jumlahKursi,
         tiket.totalHarga,

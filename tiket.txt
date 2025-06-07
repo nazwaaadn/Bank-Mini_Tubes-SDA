@@ -1,4 +1,6 @@
-TK17492843Naira|Naira|Cilegon|2025-05-06 13:00|12|1|50000|confirmed
-TK17492845Naira|Naira|Dago|2025-06-09 13:00|12|1|50000|confirmed
-TK17492847Naira|Naira|Dago|2025-07-09 13:00|12|1|50000|confirmed
-TK17492854Naira|Naira|Simpang|2025-04-06 13:00|12|3|150000|confirmed
+TK17492875Naira|Naira|Bandung|Simpang|2025-09-09 13:00|0úýEþ|12|1|50000|confirmed
+TK17492876Naira|Naira|Dago|Simpang|2025-09-24 14:00|0úýEþ|12|2|100000|confirmed
+TK17492877Tsuki|Tsuki|Bandung|Dago|2025-04-04 13:00|0úýEþ|18|2|100000|confirmed
+TK17492879Tsuki|Tsuki|Bandung|Cimahi|2025-06-07 13:00|Cimahi|12|1|50000|confirmed
+TK1749289025|Naira|Bandung|Dago|2025-09-09 13:00|25|12|1|50000|confirmed
+TK17492893Bus05|Naira|Bandung|Dago|2025-09-04 13:00|Bus05|12|1|50000|confirmed
