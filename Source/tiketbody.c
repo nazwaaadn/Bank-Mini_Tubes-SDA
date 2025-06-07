@@ -22,6 +22,76 @@ time_t parseDatetime(const char* str) {
     return mktime(&tm);
 }
 
+// =========================================
+void muatDataBus() {
+    FILE *file = fopen("FileManajemen/dataBus.txt", "r");
+    if (!file) {
+        printf("Gagal membuka FileManajemen/dataBus.txt\n");
+        return;
+    }
+
+    char line[512];
+    while (fgets(line, sizeof(line), file)) {
+        // Buat variabel sementara untuk baca dari file
+        char idBus[20], platNomor[30], namaSupir[50], ruteStr[200], waktuBrk[6], waktuTba[6];
+        int kapasitas;
+        char kelas;
+
+        // Hapus newline di akhir line
+        line[strcspn(line, "\r\n")] = '\0';
+
+        int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%199[^|]|%5[^|]|%5[^|]",
+                                 idBus, platNomor, namaSupir, &kapasitas, &kelas, ruteStr, waktuBrk, waktuTba);
+        if (jumlahField != 8) {
+            printf("Format data bus salah: %s\n", line);
+            continue;  // Lewati baris yang rusak
+        }
+
+        // Buat DataBus baru dan isi data
+        DataBus bus;
+        strcpy(bus.idBus, idBus);
+        strcpy(bus.platNomor, platNomor);
+        strcpy(bus.namaSupir, namaSupir);
+        bus.kapasitas = kapasitas;
+        bus.kelas = kelas;
+
+        // Konversi rute string ke linked list rute
+        bus.rute = stringToRute(ruteStr);
+
+        // Parse waktu keberangkatan
+        int jam, menit;
+        struct tm waktu = {0};
+        sscanf(waktuBrk, "%d:%d", &jam, &menit);
+        waktu.tm_year = 123;  // tahun 2023 (tahun sejak 1900)
+        waktu.tm_mon = 0;
+        waktu.tm_mday = 1;
+        waktu.tm_hour = jam;
+        waktu.tm_min = menit;
+        bus.keberangkatan = mktime(&waktu);
+
+        // Parse waktu kedatangan
+        sscanf(waktuTba, "%d:%d", &jam, &menit);
+        waktu.tm_hour = jam;
+        waktu.tm_min = menit;
+        bus.kedatangan = mktime(&waktu);
+
+        // Alokasi node bus baru
+        NodeBus *baru = alokasiNodeBus(bus);
+        if (baru == NULL) {
+            printf("Gagal alokasi memori untuk bus %s\n", idBus);
+            continue;
+        }
+
+        // Masukkan node baru di depan list HeadBus
+        baru->next = HeadBus;
+        HeadBus = baru;
+    }
+
+    fclose(file);
+}
+
+//=====================================================================
+
 void timeToString(time_t waktu, char* buffer) {
     strftime(buffer, 30, "%Y-%m-%d %H:%M", localtime(&waktu));
 }
@@ -80,14 +150,15 @@ void cetakTiket(char idTiket[]) {
 	printf("\n+===========================================+\n");
 	printf("|          TIKET BUS TRANSJAKARTA           |\n");
 	printf("+===========================================+\n");
-	printf("| ID Tiket     : %-26s |\n", tiket->Info.idTiket);
-	printf("| Nama         : %-26s |\n", tiket->Info.namaPenumpang);
-	printf("| Tujuan       : %-26s |\n", tiket->Info.tujuan);
-	printf("| Jadwal       : %-26s |\n", tiket->Info.jadwal);
-	printf("| No. Kursi    : %-26d |\n", tiket->Info.noKursi);
-	printf("| Jumlah Kursi : %-26d |\n", tiket->Info.jumlahKursi);
-	printf("| Total Harga  : Rp%-24d |\n", tiket->Info.totalHarga);
-	printf("| Status       : %-26s |\n", tiket->Info.status);
+    printf("| ID Tiket     : %-26s |\n", tiket->Info.idTiket);
+    printf("| Nama         : %-26s |\n", tiket->Info.namaPenumpang);
+    printf("| Dari         : %-26s |\n", tiket->Info.awal); 
+    printf("| Tujuan       : %-26s |\n", tiket->Info.tujuan);
+    printf("| Jadwal       : %-26s |\n", tiket->Info.jadwal);
+    printf("| ID Bus       : %-26s |\n", tiket->bus ? tiket->bus->Info.idBus : "N/A");
+    printf("| Jumlah Kursi : %-26d |\n", tiket->Info.jumlahKursi);
+    printf("| Total Harga  : Rp%-24d |\n", tiket->Info.totalHarga);
+    printf("| Status       : %-26s |\n", tiket->Info.status);
 	printf("+===========================================+\n");
 	printf("|     TERIMA KASIH TELAH MEMESAN TIKET!     |\n");
 	printf("+===========================================+\n");
@@ -109,9 +180,10 @@ void printAllTiket() {
 		printf("+===========================================+\n");
         printf("| ID Tiket     : %-26s |\n", current->Info.idTiket);
         printf("| Nama         : %-26s |\n", current->Info.namaPenumpang);
+        printf("| Dari         : %-26s |\n", current->Info.awal); 
         printf("| Tujuan       : %-26s |\n", current->Info.tujuan);
         printf("| Jadwal       : %-26s |\n", current->Info.jadwal);
-        printf("| No. Kursi    : %-26d |\n", current->Info.noKursi);
+        printf("| ID Bus       : %-26s |\n", current->bus ? current->bus->Info.idBus : "N/A");
         printf("| Jumlah Kursi : %-26d |\n", current->Info.jumlahKursi);
         printf("| Total Harga  : Rp%-24d |\n", current->Info.totalHarga);
         printf("| Status       : %-26s |\n", current->Info.status);
@@ -140,92 +212,55 @@ void pesanTiket(NodeUser* user) {
         return;
     }
 
-    char tujuan[50], jadwalStr[25];
+    char awal[50], tujuan[50], jadwalStr[25];
+    char idBus[10];
     struct tm tm_jadwal = {0};
-    time_t jadwal = mktime(&tm_jadwal);
     int jumlahKursi;
     int hargaPerKursi = 50000;
 
-    printf("Masukkan tujuan (terminal)       : ");
+    printf("Masukkan ID Bus (misal: Bus1): ");
+    scanf(" %[^\n]", idBus);
+    idBus[strcspn(idBus, "\n")] = '\0'; // Bersihkan newline
+
+    printf("Masukkan Lokasi Awal (terminal)       : ");
+    scanf(" %[^\n]", awal);
+    awal[strcspn(awal, "\n")] = '\0';
+
+    printf("Masukkan Lokasi Tujuan (terminal)     : ");
     scanf(" %[^\n]", tujuan);
+    tujuan[strcspn(tujuan, "\n")] = '\0';
+
     printf("Masukkan jadwal (YYYY-MM-DD HH:MM): ");
     scanf(" %[^\n]", jadwalStr);
+    jadwalStr[strcspn(jadwalStr, "\n")] = '\0';
+
     printf("Jumlah kursi dipesan  : ");
     scanf("%d", &jumlahKursi);
-   
-    // Convert jadwal string to time_t
-    int tahun, bulan, hari, jam, menit;
-    if (sscanf(jadwalStr, "%d-%d-%d %d:%d", &tahun, &bulan, &hari, &jam, &menit) != 5) {
-        printf("Format jadwal salah.\n");
-        return;
-    }
 
-    tm_jadwal.tm_year = tahun - 1900;
-    tm_jadwal.tm_mon = bulan - 1;
-    tm_jadwal.tm_mday = hari;
-    tm_jadwal.tm_hour = jam;
-    tm_jadwal.tm_min = menit;
-
-    // Cari semua bus yang rutenya mengandung tujuan dan jadwal cocok
+    // Cari bus berdasarkan ID
+    NodeBus* selectedBus = NULL;
     NodeBus* current = HeadBus;
-    NodeBus* foundBuses[100];
-    int foundCount = 0;
 
     while (current != NULL) {
-        // Cek apakah tujuan ada dalam rute
-        NodeRute* r = current->Info.rute;
-        int tujuanMatch = 0;
-        while (r != NULL) {
-            if (strcmp(r->namaTerminal, tujuan) == 0) {
-                tujuanMatch = 1;
-                break;
-            }
-            r = r->next;
+        printf("[DEBUG] Cek ID Bus: '%s'\n", current->Info.idBus);
+        if (strcmp(current->Info.idBus, idBus) == 0) {
+            selectedBus = current;
+            break;
         }
-
-        // Cek jadwal keberangkatan cocok (toleransi 1 menit)
-        if (tujuanMatch && fabs(difftime(current->Info.keberangkatan, jadwal)) < 60) {
-            foundBuses[foundCount++] = current;
-        }
-
         current = current->next;
     }
 
-    if (foundCount == 0) {
-        printf("Tidak ada bus dengan tujuan dan jadwal yang sesuai.\n");
+    if (selectedBus == NULL) {
+        printf("Bus dengan ID %s tidak ditemukan.\n", idBus);
         return;
     }
 
-    // Tampilkan daftar bus ditemukan
-    printf("\nBus tersedia:\n");
-    for (int i = 0; i < foundCount; i++) {
-        char waktuStr[30];
-        strftime(waktuStr, sizeof(waktuStr), "%Y-%m-%d %H:%M", localtime(&foundBuses[i]->Info.keberangkatan));
-        printf("[%d] ID: %s | Supir: %s | Kelas: %c | Kapasitas: %d | Jadwal: %s\n",
-               i + 1,
-               foundBuses[i]->Info.idBus,
-               foundBuses[i]->Info.namaSupir,
-               foundBuses[i]->Info.kelas,
-               foundBuses[i]->Info.kapasitas,
-               waktuStr);
-    }
-
-    int pilihan;
-    printf("Pilih bus [1-%d]: ", foundCount);
-    scanf("%d", &pilihan);
-    if (pilihan < 1 || pilihan > foundCount) {
-        printf("Pilihan tidak valid.\n");
-        return;
-    }
-
-    NodeBus* selectedBus = foundBuses[pilihan - 1];
-
-    // Buat data tiket
+    // Buat data tiket baru
     DataTiket tiketBaru;
     sprintf(tiketBaru.idTiket, "TK%ld", time(NULL));
     strcpy(tiketBaru.namaPenumpang, user->Info.nama);
-    strcpy(tiketBaru.tujuan, tujuan);
-    strftime(tiketBaru.jadwal, sizeof(tiketBaru.jadwal), "%Y-%m-%d %H:%M", localtime(&selectedBus->Info.keberangkatan));
+    strcpy(tiketBaru.tujuan, tujuan);     // berdasarkan input user
+    strcpy(tiketBaru.jadwal, jadwalStr);  // berdasarkan input user
     tiketBaru.noKursi = rand() % selectedBus->Info.kapasitas + 1;
     tiketBaru.jumlahKursi = jumlahKursi;
     tiketBaru.totalHarga = hargaPerKursi * jumlahKursi;
@@ -235,6 +270,7 @@ void pesanTiket(NodeUser* user) {
     simpanTiketKeFile(tiketBaru);
     cetakTiket(tiketBaru.idTiket);
 }
+
 
 
 

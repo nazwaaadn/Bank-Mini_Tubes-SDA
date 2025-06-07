@@ -8,6 +8,7 @@
 int main() {
     SplashScreenUser();  // Tampilkan tampilan awal Translibe
     loadUsersFromFile("userDatabase.txt");
+    muatDataBus(); // <--- load data dari file ke memori
 
     int pilihan;
     do {
