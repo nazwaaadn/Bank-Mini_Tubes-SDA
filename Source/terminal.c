@@ -16,7 +16,7 @@ void CreateTerminal(terminalTree X)
     X[7].info = "Setiabudi"; X[7].ps_fs = 13; X[7].ps_nb = nil; X[7].ps_pr = 1; 
     X[8].info = "Sukajadi"; X[8].ps_fs = 14; X[8].ps_nb = nil; X[8].ps_pr = 2; 
     X[9].info = "Cibeunying Kaler"; X[9].ps_fs = 15; X[9].ps_nb = nil; X[9].ps_pr = 3; 
-    X[10].info = "Cibeunying Kidul"; X[10].ps_fs = 16; X[10].ps_nb = 2; X[10].ps_pr = 4;  
+    X[10].info = "Cibeunying Kidul"; X[10].ps_fs = 16; X[10].ps_nb = nil; X[10].ps_pr = 4;  
     X[11].info = "Balubur"; X[11].ps_fs = 17; X[11].ps_nb = nil; X[11].ps_pr = 5; 
     X[12].info = "Punclut"; X[12].ps_fs = 18; X[12].ps_nb = nil; X[12].ps_pr = 6; 
     X[13].info = "Ledeng"; X[13].ps_fs = 19; X[13].ps_nb = nil; X[13].ps_pr = 7; 
@@ -28,9 +28,9 @@ void CreateTerminal(terminalTree X)
     X[19].info = "Parongpong"; X[19].ps_fs = nil; X[19].ps_nb = nil; X[19].ps_pr = 13;  
     X[20].info = "Cicendo"; X[20].ps_fs = 24; X[20].ps_nb = nil; X[20].ps_pr = 14; 
     X[21].info = "Ujungberung"; X[21].ps_fs = 25; X[21].ps_nb = nil; X[21].ps_pr = 15; 
-    X[22].info = "Arcamanik"; X[22].ps_fs = 16; X[22].ps_nb = nil; X[22].ps_pr = 26; 
+    X[22].info = "Arcamanik"; X[22].ps_fs = 26; X[22].ps_nb = nil; X[22].ps_pr = 16; 
     X[23].info = "Jalan Asia Afrika"; X[23].ps_fs = 27; X[23].ps_nb = nil; X[23].ps_pr = 17; 
-    X[24].info = "Cimindi"; X[24].ps_fs = 20; X[24].ps_nb = nil; X[24].ps_pr = 29; 
+    X[24].info = "Cimindi"; X[24].ps_fs = 29; X[24].ps_nb = nil; X[24].ps_pr = 20; 
     X[25].info = "Cibiru"; X[25].ps_fs = 21; X[25].ps_nb = nil; X[25].ps_pr = 30; 
     X[26].info = "Cinambo"; X[26].ps_fs = nil; X[26].ps_nb = nil; X[26].ps_pr = 22; 
     X[27].info = "Sumur Bandung"; X[27].ps_fs = 31; X[27].ps_nb = 28; X[27].ps_pr = 23; 
@@ -51,9 +51,14 @@ void CreateTerminal(terminalTree X)
     X[42].info = "Banjaran"; X[42].ps_fs = nil; X[42].ps_nb = nil; X[42].ps_pr = 41;  
 }
 
-
-
-
+void tampilkanTerminal(terminalTree T) {
+    printf("Daftar Terminal:\n");
+    for (int i = 0; i < jml_maks; i++) {
+        if (T[i].info != NULL) {
+            printf("%d. %s\n", i, T[i].info);
+        }
+    }
+}
 
 
 address findRuteAwal(terminalTree T, address idx, char* awal) {

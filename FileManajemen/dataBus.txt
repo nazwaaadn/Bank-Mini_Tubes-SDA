@@ -1,3 +1,6 @@
-Bus04|ajhja|nn|30|A|DagoSimpang DagoCiumbuleuitPunclutLembangSetiabudiLedengParongpongPasteurSukajadiPajajaranCicendoCimiï¿½ß°c|16:20|16:20
 ansma|saj|sak|20|C|Dago->Pasteur->Sukajadi|09:30|09:30
-    *||ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)|40|C|Dago->Simpang Dago->Ciumbuleuit->Punclut|13:40|13:40
+Bus05|AJ82978K|Jay|30|C|Dago->Simpang Dago->Setiabudi->Ledeng|15:20|15:20
+ajsk|absma|saf|40|B|Pasteur->Sukajadi->Pajajaran->Cicendo->Cimindi|04:30|04:30
+bus111|ajn|ab|30|A|Pasteur->Sukajadi->Pajajaran->Cicendo->Cimindi->Cimahi Tengah->Cimahi Utara->KBP|09:30|09:30
+ads|sb|aj|60|A|Dago->Gasibu->Cibeunying Kaler->Antapani->Ujungberung|10:30|10:30
+*||ÿÿÿÿÿÿÿ)|50|C|Dago->Pasteur|09:40|09:40

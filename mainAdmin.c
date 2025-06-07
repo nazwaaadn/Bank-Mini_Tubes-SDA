@@ -26,52 +26,64 @@ int main() {
             // case 2:
             //     ReleaseBusDariTerminal();
             //     break;
-            case 1:
-                ManajemenBus();
-                printf("Masukkan pilihan Anda: ");
+            case 1: {
                 int pilihMenuAdmin;
-                scanf("%d", &pilihMenuAdmin);
+                do {
+                    ManajemenBus(); // Tampilkan menu setiap kali loop
+                    printf("Masukkan pilihan Anda: ");
+                    scanf("%d", &pilihMenuAdmin);
 
-                switch (pilihMenuAdmin) {
-                    case 1: {
-                        terminalTree T;
-                        CreateTerminal(T);  // Inisialisasi terminalTree
-                        int root = 0;  // Asumsi root adalah 0
-                        NodeBus *busBaru = inputDataBus(T, root); // langsung NodeBus*
-                        printf("Data bus berhasil ditambahkan.\n");
-                        break;
+                    switch (pilihMenuAdmin) {
+                        case 1: {
+                            terminalTree T;
+                            CreateTerminal(T);  // Inisialisasi terminalTree
+                            int root = 0;  // Asumsi root adalah 0
+                            NodeBus *busBaru = inputDataBus(T, root); // langsung NodeBus*
+                            printf("Data bus berhasil ditambahkan.\n");
+                            break;
+                        }
+
+                        case 2: {
+                            char idBus[10];
+                            printf("Masukkan ID Bus yang ingin dihapus: ");
+                            scanf("%s", idBus);
+                            deleteBus(idBus);
+                            break;
+                        }
+
+                        case 3: {
+                            char idBus[10];
+                            printf("Masukkan ID Bus yang ingin diedit: ");
+                            scanf("%s", idBus);
+                            bersihkanDataBus();                        
+                            editBus(idBus);
+                            break;
+                        }
+
+                        case 4:
+                            printAllBus();
+                            break;
+
+                        case 5:
+                            terminalTree T;
+                            CreateTerminal(T); 
+                            PreOrder(T, 0, ""); // Tampilkan semua bus
+                            break;
+
+                        default:
+                            printf("Pilihan tidak valid.\n");
                     }
-
-                    case 2: {
-                        char idBus[10];
-                        printf("Masukkan ID Bus yang ingin dihapus: ");
-                        scanf("%s", &idBus);
-
-                        deleteBus(idBus);
-                        break;
-                    }
-                    case 3: {
-                        char idBus[10];
-                        printf("Masukkan ID Bus yang ingin diedit: ");
-                        scanf("%s", &idBus);
-                        bersihkanDataBus();                        
-                        editBus(idBus);
-
-                        break;
-                    }
-                    case 4:
-                        printAllBus();
-                        break;
-                    case 5:
-                        printf("Kembali ke menu admin...\n");
-                        break;
-                    default:
-                        printf("Pilihan tidak valid.\n");
-                }
+                    printf("\n");
+                } while (pilihMenuAdmin != 5);
                 break;
-            // case 4:
-            //     AturRuteBusKembali();
-            //     break;
+            }
+
+                break;
+            case 3:
+                terminalTree T;
+                CreateTerminal(T); 
+                tampilkanTerminal(T);
+                break;
             // case 5:
             //     LihatDataTiketPelanggan();
             //     break;
