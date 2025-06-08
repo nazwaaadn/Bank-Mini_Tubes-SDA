@@ -36,7 +36,7 @@ void logoutUser();
 
 // tambahan
 //
-void afterLoginMenu(NodeUser* user);
+void menuPelanggan(NodeUser* user);  // ✅ supaya bisa dipanggil dari Login() di user.c
 void pesanTiket(NodeUser* user);
 void loadUsersFromFile(const char* filename);
 void saveUsersToFile(const char* filename);
