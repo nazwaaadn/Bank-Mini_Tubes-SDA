@@ -4,6 +4,8 @@
 #include "BOOLEAN.h"
 #include <stdio.h>
 #include <time.h>
+#include "bus.h"
+#include "user.h"
 
 #define Nil NULL
 #define Info(P) (P)->Info

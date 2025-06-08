@@ -1,1 +1,5 @@
-TK17493051Bus05|Naira|Dago|Ledeng|Bus05|12|1|50000|confirmed
+TK17493051Bus03|Tsinan|Dago|Ledeng|Bus03|10|50000|confirmed
+TK17493052Bus03|Tsinan|Dago|Simpang Dago|Bus03|10|50000|confirmed
+TK17493053Bus03|Nazwa|Ledeng|Parongpong|Bus03|5|50000|confirmed
+TK17493054Bus03|Rose|Parongpong|Setiabudi|Bus03|7|50000|confirmed
+TK17493055Bus03|Ruri Riyanti|Setiabudi|Dago|Bus03|8|50000|confirmed

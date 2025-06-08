@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "user.h"
-#include "tiket.h"
-#include "bus.h"
-#include "terminal.h"
+#include "../Header/user.h"
+#include "../Header/tiket.h"
+#include "../Header/bus.h"
+#include "../Header/terminal.h"
 #include <math.h>
 
 time_t parseDatetime(const char* str) {

@@ -7,25 +7,6 @@
 /**** Predikat untuk test keadaan LIST ****/
 NodeBus *HeadBus = Nil;
 NodeRute *HeadRute = Nil;
-boolean isBusListEmpty()
-/* Mengirim true jika List Kosong */
-{
-	if (HeadBus == Nil)
-    {
-        return true;
-    }else {
-        return false;
-    }
-}
-
-NodeBus* alokasiNodeBus(DataBus busData) {
-    NodeBus* newNode = (NodeBus*)malloc(sizeof(NodeBus));
-    if (newNode != NULL) {
-        newNode->Info = busData;  
-        newNode->next = NULL;
-    }
-    return newNode;
-}
 
 void freeBus(NodeBus* busNode) {
     if (busNode != NULL) {
@@ -404,6 +385,7 @@ void deleteBus(char idBus[]) {
         remove("FileManajemen/temp.txt");
         printf("Bus dengan ID %s tidak ditemukan di file.\n", idBus);
     }
+    hapusRute(&HeadRute);  // Hapus semua rute yang ada
 }
 
 
