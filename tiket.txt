@@ -1,0 +1,2 @@
+TKT1749363227|tsinan|Dago|Simpang|Bus02|aktif
+TKT1749363683|tsinan|Simpang Dago|Ledeng|Bus02|aktif
