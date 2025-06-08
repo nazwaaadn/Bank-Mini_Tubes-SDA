@@ -29,19 +29,19 @@ void SplashScreenAdmin(){
     printf("======================================================\n");
 }
 
-void UserMenu()
-{
-    printf("===================================\n");
-    printf("|        MENU UTAMA PELANGGAN     |\n");
-    printf("===================================\n");
-    printf("1. Pesan Tiket\n");
-    printf("2. Lihat Tiket Aktif\n");
-    printf("3. Riwayat Perjalanan\n");
-    printf("4. Batalkan Tiket\n");
-    printf("5. Keluar\n");
-    printf("===================================\n");
-    printf("Masukkan pilihan Anda: ");
-}
+// void UserMenu()
+// {
+//     printf("===================================\n");
+//     printf("|        MENU UTAMA PELANGGAN     |\n");
+//     printf("===================================\n");
+//     printf("1. Pesan Tiket\n");
+//     printf("2. Lihat Tiket Aktif\n");
+//     printf("3. Riwayat Perjalanan\n");
+//     printf("4. Batalkan Tiket\n");
+//     printf("5. Keluar\n");
+//     printf("===================================\n");
+//     printf("Masukkan pilihan Anda: ");
+// }
 
 void AdminMenu()
 {

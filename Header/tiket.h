@@ -2,8 +2,8 @@
 #define TIKET_H
 
 #include <time.h>
-#include "user.h"
-#include "bus.h"
+#include "../Header/user.h"
+#include "../Header/bus.h"
 
 // Struktur Tiket
 typedef struct {
@@ -40,7 +40,7 @@ void deleteAllTiket();
 void cetakTiket(char idTiket[]);
 void batalkanTiket(const char* idTiket);
 void simpanTiketKeFile(DataTiket tiket);
-void printTiketAktifByUser(NodeUser* user);
-void printAllTiketByUser(NodeUser* user);
+void printTiketAktifByUser();
+void printAllTiketByUser();
 
 #endif

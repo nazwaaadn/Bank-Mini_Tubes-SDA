@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "user.h"
-#include "tiket.h"
-#include "bus.h"
-#include "terminal.h"
+#include "../Header/user.h"
+#include "../Header/tiket.h"
+#include "../Header/bus.h"
+#include "../Header/terminal.h"
 #include <math.h>
 #include <ctype.h>
 
@@ -175,49 +175,30 @@ void printAllTiket() {
         return;
     }
 
-    NodeTiket* current = HeadTiket;
-    while (current) {
-        NodeTiket* temp = current;
-        current = current->next;
-        free(temp);
-    }
-    HeadTiket = NULL;
-
     char line[256];
+    char idTiket[20], namaPenumpang[50], awal[50], tujuan[50], idBus[20], status[20];
+    int count = 0;
+
+    printf("\n+=========== Daftar Tiket ===========+\n");
+
     while (fgets(line, sizeof(line), f)) {
-        DataTiket tiket;
+        if (sscanf(line, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^\n]",
+                   idTiket, namaPenumpang, awal, tujuan, idBus, status) == 6) {
 
-        sscanf(line, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^\n]",
-            tiket.idTiket,
-            tiket.namaPenumpang,
-            tiket.awal,
-            tiket.tujuan,
-            tiket.idBus,
-            tiket.status);
-
-        NodeTiket* newNode = (NodeTiket*)malloc(sizeof(NodeTiket));
-        newNode->Info = tiket;
-        newNode->bus = NULL;
-        newNode->next = HeadTiket;
-        HeadTiket = newNode;
+            // Tampilkan hanya yang aktif (bisa juga pakai strcasecmp jika ingin bebas huruf besar/kecil)
+                printf("\n+============================+\n");
+                printf(" ID Tiket  : %s\n", idTiket);
+                printf(" Nama      : %s\n", namaPenumpang);
+                printf(" Dari      : %s\n", awal);
+                printf(" Tujuan    : %s\n", tujuan);
+                printf(" Bus       : %s\n", idBus);
+                printf(" Status    : %s\n", status);
+                printf("+============================+\n");
+        }
     }
 
     fclose(f);
-
-    current = HeadTiket;
-    while (current != NULL) {
-        printf("\n+============================+\n");
-        printf(" ID Tiket  : %s\n", current->Info.idTiket);
-        printf(" Nama      : %s\n", current->Info.namaPenumpang);
-        printf(" Dari      : %s\n", current->Info.awal);
-        printf(" Tujuan    : %s\n", current->Info.tujuan);
-        printf(" Bus       : %s\n", current->Info.idBus);
-        printf(" Status    : %s\n", current->Info.status);
-        printf("+============================+\n");
-        current = current->next;
-    }
 }
-
 
 NodeBus* searchBusByIDFromFile(const char* idTargetRaw) {
     FILE *file = fopen("FileManajemen/dataBus.txt", "r");
@@ -297,17 +278,20 @@ NodeBus* searchBusByIDFromFile(const char* idTargetRaw) {
 // Fungsi simulasi pemesanan tiket oleh user
 void pesanTiket(NodeUser* user) {
     char idBus[20];
+    char awal[50], tujuan[50];
+    
     printf("\nMasukkan ID Bus yang ingin dipesan: ");
     fgets(idBus, sizeof(idBus), stdin);
+    idBus[strcspn(idBus, "\r\n")] = '\0';  // Bersihkan newline dan trailing space
 
-    // Bersihkan newline dan trailing space
-    idBus[strcspn(idBus, "\r\n")] = '\0';
-    for (int i = strlen(idBus) - 1; i >= 0 && isspace((unsigned char)idBus[i]); --i)
-        idBus[i] = '\0';
-    // Hapus spasi depan
-    int start = 0;
-    while (isspace((unsigned char)idBus[start])) start++;
-    if (start > 0) memmove(idBus, idBus + start, strlen(idBus + start) + 1);
+    // Meminta input terminal awal dan tujuan
+    printf("Masukkan terminal awal: ");
+    fgets(awal, sizeof(awal), stdin);
+    awal[strcspn(awal, "\r\n")] = '\0';
+
+    printf("Masukkan terminal tujuan: ");
+    fgets(tujuan, sizeof(tujuan), stdin);
+    tujuan[strcspn(tujuan, "\r\n")] = '\0';
 
     NodeBus* bus = searchBusByIDFromFile(idBus);
     if (bus == NULL) {
@@ -319,8 +303,8 @@ void pesanTiket(NodeUser* user) {
     snprintf(tiketBaru.idTiket, sizeof(tiketBaru.idTiket), "TKT%ld", time(NULL));
     strcpy(tiketBaru.idBus, bus->Info.idBus);
     strcpy(tiketBaru.namaPenumpang, user->Info.nama);
-    strcpy(tiketBaru.awal, bus->Info.rute->namaTerminal);
-    strcpy(tiketBaru.tujuan, bus->Info.rute->next ? bus->Info.rute->next->namaTerminal : "-");
+    strcpy(tiketBaru.awal, awal);  // Gunakan input terminal awal
+    strcpy(tiketBaru.tujuan, tujuan);  // Gunakan input terminal tujuan
     strcpy(tiketBaru.status, "aktif");
 
     insertTiket(tiketBaru, bus);
@@ -329,8 +313,6 @@ void pesanTiket(NodeUser* user) {
     printf("Tiket berhasil dipesan!\n");
     printf("ID Tiket: %s\n", tiketBaru.idTiket);
 }
-
-
 
 int deleteTiketByID(char idTiket[]) {
     NodeTiket *current = HeadTiket;
@@ -423,46 +405,128 @@ void simpanTiketKeFile(DataTiket tiket) {
 
 
 //tambahan
-void printTiketAktifByUser(NodeUser* user) {
-    NodeTiket* temp = HeadTiket;
+void printTiketAktifByUser() {
+    if (currentUser == NULL) {
+        printf("Anda belum login.\n");
+        return;
+    }
+
+    FILE* f = fopen("tiket.txt", "r");
+    if (!f) {
+        printf("Gagal membuka file tiket.txt\n");
+        return;
+    }
+
+    char idTiket[20], namaPenumpang[50], awal[50], tujuan[50], idBus[20], status[20];
     int found = 0;
+
+    printf("\n--- Riwayat Tiket Anda (%s) ---\n", currentUser->Info.nama);
+
     printf("\n--- Tiket Aktif Anda ---\n");
-    while (temp != NULL) {
-        if (strcmp(temp->Info.namaPenumpang, user->Info.nama) == 0 &&
-            strcmp(temp->Info.status, "aktif") == 0) {
-            printf("ID Tiket : %s\n", temp->Info.idTiket);
-            printf("Bus      : %s\n", temp->Info.idBus);
-            printf("Dari     : %s\n", temp->Info.awal);
-            printf("Tujuan   : %s\n", temp->Info.tujuan);
-            printf("Status   : %s\n", temp->Info.status);
+    while (fscanf(f, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^\n]\n",
+                  idTiket, namaPenumpang, awal, tujuan, idBus, status) == 6) {
+        if (strcmp(namaPenumpang, currentUser->Info.nama) == 0 &&
+            strcmp(status, "aktif") == 0) {
+            printf("ID Tiket : %s\n", idTiket);
+            printf("Bus      : %s\n", idBus);
+            printf("Dari     : %s\n", awal);
+            printf("Tujuan   : %s\n", tujuan);
+            printf("Status   : %s\n", status);
             printf("-----------------------------\n");
             found = 1;
         }
-        temp = temp->next;
     }
+
     if (!found) {
         printf("Tidak ada tiket aktif.\n");
     }
+
+    fclose(f);
 }
 
+void printAllTiketByUser() {
+    if (currentUser == NULL) {
+        printf("Anda belum login.\n");
+        return;
+    }
 
-void printAllTiketByUser(NodeUser* user) {
-    NodeTiket* temp = HeadTiket;
+    FILE* f = fopen("tiket.txt", "r");
+    if (!f) {
+        printf("Gagal membuka file tiket.txt\n");
+        return;
+    }
+
+    char idTiket[20], namaPenumpang[50], awal[50], tujuan[50], idBus[20], status[20];
     int found = 0;
-    printf("\n--- Riwayat Tiket Anda ---\n");
-    while (temp != NULL) {
-        if (strcmp(temp->Info.namaPenumpang, user->Info.nama) == 0) {
-            printf("ID Tiket : %s\n", temp->Info.idTiket);
-            printf("Bus      : %s\n", temp->Info.idBus);
-            printf("Dari     : %s\n", temp->Info.awal);
-            printf("Tujuan   : %s\n", temp->Info.tujuan);
-            printf("Status   : %s\n", temp->Info.status);
+
+    printf("\n--- Riwayat Tiket Anda (%s) ---\n", currentUser->Info.nama);
+
+    while (fscanf(f, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%[^\n]\n",
+                  idTiket, namaPenumpang, awal, tujuan, idBus, status) == 6) {
+        if (strcmp(namaPenumpang, currentUser->Info.nama) == 0) {
+            printf("ID Tiket : %s\n", idTiket);
+            printf("Bus      : %s\n", idBus);
+            printf("Dari     : %s\n", awal);
+            printf("Tujuan   : %s\n", tujuan);
+            printf("Status   : %s\n", status);
             printf("-----------------------------\n");
             found = 1;
         }
-        temp = temp->next;
     }
+
     if (!found) {
         printf("Tidak ada riwayat tiket.\n");
     }
+
+    fclose(f);
+}
+
+void UserMenu(NodeUser* user)
+{
+    int pilihan;
+    char buffer[10];
+    char id[20];
+
+    do {
+        printf("===================================\n");
+        printf("|        MENU UTAMA PELANGGAN     |\n");
+        printf("===================================\n");
+        printf("1. Pesan Tiket\n");
+        printf("2. Lihat Tiket Aktif\n");
+        printf("3. Riwayat Perjalanan\n");
+        printf("4. Batalkan Tiket\n");
+        printf("5. Keluar\n");
+        printf("===================================\n");
+        printf("Masukkan pilihan Anda: ");
+        
+        fgets(buffer, sizeof(buffer), stdin);
+        if (sscanf(buffer, "%d", &pilihan) != 1) {
+            printf("Input tidak valid.\n");
+            continue;
+        }
+
+        switch (pilihan) {
+            case 1:
+                printAllBus();   // Menampilkan semua bus
+                pesanTiket(user); // Fungsi untuk memesan tiket
+                break;
+            case 2:
+                printTiketAktifByUser(); // Menampilkan tiket aktif pengguna
+                break;
+            case 3:
+                printAllTiketByUser();   // Menampilkan riwayat tiket
+                break;
+            case 4:
+                printf("Masukkan ID Tiket yang ingin dibatalkan: ");
+                fgets(id, sizeof(id), stdin);
+                id[strcspn(id, "\n")] = '\0';
+                batalkanTiket(id);   // Membatalkan tiket berdasarkan ID
+                break;
+            case 5:
+                printf("Keluar dari menu pelanggan.\n");
+                return;  // Keluar dari menu pelanggan dan kembali ke menu utama
+            default:
+                printf("Pilihan tidak valid.\n");
+        }
+    } while (1); // Loop terus hingga pengguna memilih untuk keluar
 }

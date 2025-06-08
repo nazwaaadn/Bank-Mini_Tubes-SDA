@@ -1,4 +1,5 @@
 #include "user.h"
+#include "desain.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -79,40 +80,42 @@ void Register() {
     }
 }
 
-NodeUser* findUser(char username[], char password[]) {
-    NodeUser* current = HeadUser;
-    while (current != NULL) {
-        if (strcmp(current->Info.nama, username) == 0 &&
-            strcmp(current->Info.password, password) == 0) {
-            return current;
-        }
-        current = current->next;
-    }
-    return NULL;
-}
 
-void Login() {
-    char nama[50];
-    char password[20];
 
+NodeUser* Login() {
+    char nama[50], password[20];
     printf("\n===== LOGIN AKUN =====\n");
-
     printf("Nama Pengguna : ");
     fgets(nama, sizeof(nama), stdin);
     nama[strcspn(nama, "\n")] = '\0';
-
     printf("Password      : ");
     fgets(password, sizeof(password), stdin);
     password[strcspn(password, "\n")] = '\0';
 
     NodeUser* user = findUser(nama, password);
     if (user != NULL) {
-        currentUser = user;
         printf("Login berhasil. Selamat datang, %s!\n", user->Info.nama);
-        menuPelanggan(currentUser);
+        currentUser = user;  // Set currentUser ke user yang berhasil login
+
+        // Menampilkan tiket aktif pengguna langsung setelah logina
+        return user;
     } else {
         printf("Login gagal. Nama atau password salah.\n");
+        return NULL;
     }
+}
+
+
+NodeUser* findUser(const char* nama, const char* password) {
+    NodeUser* temp = HeadUser;
+    while (temp != NULL) {
+        if (strcmp(temp->Info.nama, nama) == 0 &&
+            strcmp(temp->Info.password, password) == 0) {
+            return temp;
+        }
+        temp = temp->next;
+    }
+    return NULL;
 }
 
 void loadUsersFromFile(const char* FileUser) {
@@ -147,3 +150,4 @@ void logoutUser() {
     currentUser = NULL;
     printf("Anda telah logout.\n");
 }
+

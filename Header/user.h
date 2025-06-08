@@ -25,10 +25,10 @@ typedef struct NodeUser {
 extern NodeUser *HeadUser;
 extern NodeUser* currentUser;
 
-
+NodeUser* findUser(const char* nama, const char* password);
 
 void Register();
-void Login();
+NodeUser* Login();
 void insertUser(DataUser userBaru);
 void loginUser(char nama[], char password[]);
 void logoutUser();
@@ -36,10 +36,11 @@ void logoutUser();
 
 // tambahan
 //
-void menuPelanggan(NodeUser* user);  // ✅ supaya bisa dipanggil dari Login() di user.c
 void pesanTiket(NodeUser* user);
 void loadUsersFromFile(const char* filename);
 void saveUsersToFile(const char* filename);
 int isUsernameTaken(const char* nama);
+
+
 
 #endif

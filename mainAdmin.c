@@ -2,6 +2,7 @@
 #include "Header/bus.h"
 #include "Header/terminal.h"
 #include "Header/admin.h"
+#include "Header/tiket.h"
 #include <stdio.h>
 
 int main() {
@@ -81,9 +82,9 @@ int main() {
                 CreateTerminal(T); 
                 tampilkanTerminal(T);
                 break;
-            // case 5:
-            //     LihatDataTiketPelanggan();
-            //     break;
+            case 4:
+                printAllTiket();
+                break;
             // case 6:
             //     LaporanPerjalananBus();
             //     break;
