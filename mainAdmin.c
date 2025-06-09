@@ -3,7 +3,6 @@
 #include "Header/terminal.h"
 #include "Header/admin.h"
 #include "Header/queue.h"
-#include "Header/user.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -11,7 +10,7 @@ int main() {
     SplashScreenAdmin();
 
     Queue queueBus;
-    CreateQueue(&queueBus);    // Inisialisasi queue
+    CreateQueue(&queueBus);
 
     if (!LoginAdmin()) {
         printf("Akses ditolak. Keluar dari program...\n");
@@ -38,9 +37,7 @@ int main() {
                             int root = 0;
                             NodeBus *busBaru = inputDataBus(T, root);
                             if (busBaru != NULL) {
-                                // Setelah tambah bus, langsung masukkan ke antrian!
-                                EnQueue(&queueBus, busBaru->Info);
-                                printf("Data bus berhasil ditambahkan & masuk ke antrian.\n");
+                                printf("Data bus berhasil ditambahkan.\n");
                                 free(busBaru);
                             }
                             break;
@@ -52,31 +49,51 @@ int main() {
                             deleteBus(idBus);
                             break;
                         }
-                        case 3: {
-                            char idBus[10];
-                            printf("Masukkan ID Bus yang ingin diedit: ");
-                            scanf("%s", idBus);                     
-                            editBus(idBus);
-                            break;
-                        }
-                        case 4:
+                        case 3:
                             printAllBus();
                             break;
-                        case 5:
+                        case 4:
                             printf("Keluar dari menu manajemen bus...\n");
                             break;
                         default:
                             printf("Pilihan tidak valid.\n");
                     }
                     printf("\n");
-                } while (pilihMenuAdmin != 5);
+                } while (pilihMenuAdmin != 4);
                 break;
             }
-            case 2:
-                ReleaseBusDariTerminal(&queueBus);
+            case 2: {
+                int subpil;
+                do {
+                    printf("\n=== ANTRI & RELEASE BUS ===\n");
+                    printf("1. Antri Bus ke Terminal\n");
+                    printf("2. Release Bus dari Terminal\n");
+                    printf("3. Kembali\n");
+                    printf("Pilih: ");
+                    scanf("%d", &subpil); getchar();
+
+                    switch (subpil) {
+                        case 1:
+                            AntriBus(&queueBus); // Fungsi baru: memilih bus lalu masuk queue
+                            break;
+                        case 2:
+                            ReleaseBusDariTerminal(&queueBus);
+                            break;
+                        case 3:
+                            printf("Kembali ke menu utama.\n");
+                            break;
+                        default:
+                            printf("Pilihan tidak valid.\n");
+                    }
+                } while (subpil != 3);
                 break;
+            }
             case 3:
-                LihatBusDiSetiapTerminal(&queueBus);
+                {
+                    terminalTree T;
+                    CreateTerminal(T);
+                    tampilkanTerminal(T);
+                }
                 break;
             case 4:
                 printf("Fitur riwayat transaksi tiket belum diimplementasikan.\n");

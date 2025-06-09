@@ -95,7 +95,7 @@ void muatDataBus() {
 
 
 void printAllTiket() {
-    FILE* f = fopen("tiket.txt", "r");
+    FILE* f = fopen("FileManajemen/tiket.txt", "r");
     if (!f) {
         printf("Gagal membuka file tiket.txt\n");
         return;
@@ -168,7 +168,7 @@ void pesanTiket(NodeUser* user) {
 }
 
 void batalkanTiket(const char* idTiket) {
-    FILE* in = fopen("tiket.txt", "r");
+    FILE* in = fopen("FileManajemen/tiket.txt", "r");
     FILE* out = fopen("tiket_temp.txt", "w");
     if (!in || !out) {
         printf("Gagal membuka file.\n");
@@ -226,7 +226,7 @@ void printTiketAktifByUser() {
         return;
     }
 
-    FILE* f = fopen("tiket.txt", "r");
+    FILE* f = fopen("FileManajemen/tiket.txt", "r");
     if (!f) {
         printf("Gagal membuka file tiket.txt\n");
         return;
@@ -265,7 +265,7 @@ void printAllTiketByUser() {
         return;
     }
 
-    FILE* f = fopen("tiket.txt", "r");
+    FILE* f = fopen("FileManajemen/tiket.txt", "r");
     if (!f) {
         printf("Gagal membuka file tiket.txt\n");
         return;
@@ -309,7 +309,7 @@ void UserMenu(NodeUser* user) {
     bacaDataBus("FileManajemen/dataBus.txt", buses, &busCount);
     
     // Load tiket data
-    bacaDataTiket("tiket.txt", tiket, &tiketCount);
+    bacaDataTiket("FileManajemen/tiket.txt", tiket, &tiketCount);
 
     do {
         printf("===================================\n");

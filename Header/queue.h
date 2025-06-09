@@ -30,4 +30,6 @@ void DeAlokasiQueue(NodeBus *P);
 void InsertLast(Queue *Q, NodeBus *P);
 void DelFirst(Queue *Q, NodeBus **P);
 
+void AntriBus(Queue *Q);
+
 #endif

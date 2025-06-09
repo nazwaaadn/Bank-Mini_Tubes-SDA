@@ -6,17 +6,16 @@
 #include <stdio.h>
 #include <time.h>
 
-
 #define Nil NULL
 #define Info(P) (P)->Info
 #define Next(P) (P)->next
-
 
 typedef struct NodeRute {
     char namaTerminal[50];
     time_t waktubrgkt; 
     struct NodeRute* next;
 } NodeRute;
+
 // Struktur data utama untuk satu bus
 typedef struct {
     char idBus[10];
@@ -36,8 +35,6 @@ typedef struct NodeBus {
     struct NodeBus *next;
 } NodeBus;
 
-
-// Head pointer untuk list bus
 extern NodeBus *HeadBus;
 extern NodeRute *HeadRute;
 
@@ -46,13 +43,13 @@ boolean isBusListEmpty();
 NodeBus* alokasiNodeBus(DataBus busData);
 void freeBus(NodeBus* busNode);
 NodeBus* inputDataBus(terminalTree T, int root);
+void tambahRute(NodeRute** head, const char* nama);
 void hapusRute(NodeRute** head);
-void printAllBus(); 
 void deleteBus(char idBus[]);
-void saveSingleBusToFile(DataBus bus);
+void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize);
+NodeRute* strToRute(char* rute);
+void printAllBus(); 
 boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** headRute, time_t waktuTu);
-// void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize);
-NodeRute* strToRute(char* rute); // Fungsi baru untuk konversi string ke linked list rute
 boolean PreOrder(terminalTree P, address idx, char* tujuan);
 
 #endif

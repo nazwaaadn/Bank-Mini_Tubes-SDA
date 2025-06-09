@@ -1,6 +1,7 @@
 #include "queue.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 NodeBus* AlokasiQueue(DataBus X) {
     NodeBus *P = (NodeBus *)malloc(sizeof(NodeBus));
@@ -79,4 +80,30 @@ void deQueue(Queue *Q, DataBus *X) {
     DelFirst(Q, &P);
     *X = Info(P); 
     DeAlokasiQueue(P);
+}
+
+void AntriBus(Queue *Q) {
+    // Print daftar bus
+    printf("\n=== Daftar Bus yang Tersedia untuk Antri ===\n");
+    printAllBus();
+
+    char idBus[20];
+    printf("Masukkan ID Bus yang ingin diantrikan: ");
+    scanf("%s", idBus);
+
+    NodeBus* busNode = searchBusByID(idBus);
+    if (busNode == NULL) {
+        printf("ID Bus tidak ditemukan!\n");
+        return;
+    }
+
+    if (is_Full(*Q)) {
+        printf("Antrian penuh! Tidak bisa menambah bus lagi.\n");
+        free(busNode);
+        return;
+    }
+
+    EnQueue(Q, busNode->Info);
+    printf("Bus %s berhasil masuk ke antrian.\n", busNode->Info.idBus);
+    free(busNode); // Hanya node sementara, info sudah di-queue
 }
