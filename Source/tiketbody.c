@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../Header/user.h"
-#include "../Header/tiket.h"
-#include "../Header/bus.h"
-#include "../Header/terminal.h"
-#include "../Header/stack.h"
+#include "Header/user.h"
+#include "Header/tiket.h"
+#include "Header/bus.h"
+#include "Header/terminal.h"
+#include "Header/stack.h"
 #include <math.h>
 #include <ctype.h>
 
@@ -92,81 +92,6 @@ void muatDataBus() {
 //=====================================================================
 //=====================================================================
 
-NodeTiket *HeadTiket = NULL;
-
-int isTiketListEmpty() {
-    return HeadTiket == NULL;
-}
-
-void insertTiket(DataTiket tiketBaru, NodeBus* bus) {
-    NodeTiket* newNode = (NodeTiket*)malloc(sizeof(NodeTiket));
-    if (!newNode) {
-        printf("Gagal mengalokasikan memori untuk tiket.\n");
-        return;
-    }
-
-    newNode->Info = tiketBaru;
-    newNode->bus = bus;
-    newNode->next = NULL;
-
-    if (HeadTiket == NULL) {
-        HeadTiket = newNode;
-    } else {
-        NodeTiket* temp = HeadTiket;
-        while (temp->next != NULL) {
-            temp = temp->next;
-        }
-        temp->next = newNode;
-    }
-
-    printf("Tiket berhasil ditambahkan untuk %s ke tujuan %s.\n", tiketBaru.namaPenumpang, tiketBaru.tujuan);
-}
-
-
-// void editTiketByID(char idTiket[], DataTiket tiketBaru) {
-//     NodeTiket* tiket = searchTiketByID(idTiket);
-//     if (tiket == NULL) {
-//         printf("Tiket dengan ID %s tidak ditemukan.\n", idTiket);
-//         return;
-//     }
-
-//     tiket->Info = tiketBaru;
-//     printf("Tiket dengan ID %s berhasil diedit.\n", idTiket);
-// }
-
-NodeTiket* searchTiketByID(char idTiket[]) {
-    NodeTiket* current = HeadTiket;
-    while (current != NULL) {
-        if (strcmp(current->Info.idTiket, idTiket) == 0) {
-            return current;
-        }
-        current = current->next;
-    }
-    return NULL;
-}
-
-
-void cetakTiket(char idTiket[]) {
-    NodeTiket* tiket = searchTiketByID(idTiket);
-    if (!tiket) {
-        printf("Tiket dengan ID %s tidak ditemukan.\n", idTiket);
-        return;
-    }
-
-    printf("\n+===========================================+\n");
-    printf("|          TIKET BUS TRANSJAKARTA           |\n");
-    printf("+===========================================+\n");
-    printf("| ID Tiket     : %-26s |\n", tiket->Info.idTiket);
-    printf("| Nama         : %-26s |\n", tiket->Info.namaPenumpang);
-    printf("| Dari         : %-26s |\n", tiket->Info.awal); 
-    printf("| Tujuan       : %-26s |\n", tiket->Info.tujuan);
-    printf("| ID Bus       : %-26s |\n", tiket->bus ? tiket->bus->Info.idBus : tiket->Info.idBus);
-    printf("| Status       : %-26s |\n", tiket->Info.status);
-    printf("+===========================================+\n");
-    printf("|     TERIMA KASIH TELAH MEMESAN TIKET!     |\n");
-    printf("+===========================================+\n");
-}
-
 
 
 void printAllTiket() {
@@ -242,40 +167,6 @@ void pesanTiket(NodeUser* user) {
     printf("ID Tiket: %s\n", tiketBaru.idTiket);
 }
 
-int deleteTiketByID(char idTiket[]) {
-    NodeTiket *current = HeadTiket;
-    NodeTiket *prev = NULL;
-
-    while (current != NULL) {
-        if (strcmp(current->Info.idTiket, idTiket) == 0) {
-            if (prev == NULL) {
-                HeadTiket = current->next;
-            } else {
-                prev->next = current->next;
-            }
-            free(current);
-            printf("Tiket dengan ID %s berhasil dihapus.\n", idTiket);
-            return 1;
-        }
-        prev = current;
-        current = current->next;
-    }
-
-    printf("Tiket dengan ID %s tidak ditemukan.\n", idTiket);
-    return 0;
-}
-
-void deleteAllTiket() {
-    NodeTiket* current = HeadTiket;
-    while (current != NULL) {
-        NodeTiket* temp = current;
-        current = current->next;
-        free(temp);
-    }
-    HeadTiket = NULL;
-    printf("Semua tiket telah dihapus.\n");
-}
-
 void batalkanTiket(const char* idTiket) {
     FILE* in = fopen("tiket.txt", "r");
     FILE* out = fopen("tiket_temp.txt", "w");
@@ -312,8 +203,6 @@ void batalkanTiket(const char* idTiket) {
         printf("Tiket tidak ditemukan.\n");
 }
 
-
-
 void simpanTiketKeFile(DataTiket tiket) {
     FILE* f = fopen("tiket.txt", "a");
     if (!f) {
@@ -329,8 +218,6 @@ void simpanTiketKeFile(DataTiket tiket) {
         tiket.status);
     fclose(f);
 }
-
-
 
 //tambahan
 void printTiketAktifByUser() {

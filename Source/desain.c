@@ -57,18 +57,6 @@ void AdminMenu()
     printf("Masukkan pilihan Anda: ");
 }
 
-// void ManajemenTerminal()
-// {
-//     printf("===============================================\n");
-//     printf("|            MANAJEMEN TERMINAL               |\n");
-//     printf("===============================================\n");
-//     printf("1. Tambah Terminal Baru\n");
-//     printf("2. Hapus Terminal\n");
-//     printf("3. Lihat Daftar Terminal\n");
-//     printf("4. Kembali ke Menu Utama\n");
-//     printf("===============================================\n");
-//     printf("Masukkan pilihan Anda: ");
-// }
 
 void ManajemenBus()
 {

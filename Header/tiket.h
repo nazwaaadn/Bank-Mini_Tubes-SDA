@@ -15,32 +15,15 @@ typedef struct {
     char status[20]; // aktif / cancelled
 } DataTiket;
 
-extern NodeUser* currentUser; // Pointer ke pengguna yang sedang login
-// Forward declaration (karena NodeBus didefinisikan di tempat lain)
-struct NodeBus;
+// Pointer ke pengguna yang sedang login (diperlukan di printTiketAktifByUser)
+extern NodeUser* currentUser;
 
-typedef struct NodeTiket {
-    DataTiket Info;
-    struct NodeBus* bus;         
-    struct NodeTiket* next;
-} NodeTiket;
-
-// Global Head
-extern NodeTiket *HeadTiket;
-
-// Prototipe fungsi
+// Fungsi utama tiket (semua berbasis file, bukan linked list)
 void muatDataBus();
-int isTiketListEmpty();
-void insertTiket(DataTiket tiketBaru, struct NodeBus* bus);
-void printAllTiket();
-NodeTiket* searchTiketByID(char idTiket[]);
-NodeBus* searchBusByIDFromFile(const char* idTarget);
 void pesanTiket(NodeUser* user);
-int deleteTiketByID(char idTiket[]);
-void deleteAllTiket();
-void cetakTiket(char idTiket[]);
 void batalkanTiket(const char* idTiket);
 void simpanTiketKeFile(DataTiket tiket);
+void printAllTiket();                 // untuk admin/alat debug
 void printTiketAktifByUser();
 void printAllTiketByUser();
 void bacaDataTiket(char* filename, DataTiket tiket[], int* tiketCount);

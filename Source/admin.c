@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <string.h>
-#include "../Header/admin.h"
-
+#include "queue.h"
+#include "admin.h"
+#include "bus.h"
 
 int LoginAdmin() {
     char id[50];
@@ -22,37 +23,33 @@ int LoginAdmin() {
     }
 }
 
-// Implementasi placeholder (belum isi)
-void LihatBusDiSetiapTerminal() {
-    printf(">> Lihat Bus di Setiap Terminal (belum diimplementasi)\n");
+void LihatBusDiSetiapTerminal(Queue* q) {
+    NodeBus* curr = Front(*q);
+    int i = 1;
+    if(is_Empty(*q)) {
+        printf("Antrian kosong.\n");
+    } else {
+        printf("\n=== Daftar Bus Dalam Antrian ===\n");
+        while(curr != NULL) {
+            printf("%d. ID Bus: %s | Supir: %s\n", i, curr->Info.idBus, curr->Info.namaSupir);
+            curr = Next(curr);
+            i++;
+        }
+    }
 }
 
-void ReleaseBusDariTerminal() {
-    printf(">> Release Bus dari Terminal (belum diimplementasi)\n");
+void ReleaseBusDariTerminal(Queue* q) {
+    DataBus busKeluar;
+    deQueue(q, &busKeluar);
+    printf("Bus %s (%s) telah keluar dari antrian.\n", busKeluar.idBus, busKeluar.namaSupir);
 }
 
 void TambahBusBaru() {
     printf(">> Tambah Bus Baru (belum diimplementasi)\n");
 }
 
-void AturRuteBusKembali() {
-    printf(">> Atur Rute Bus yang Telah Kembali (belum diimplementasi)\n");
-}
-
 void LihatDataTiketPelanggan() {
     printf(">> Lihat Data Tiket Pelanggan (belum diimplementasi)\n");
-}
-
-void LaporanPerjalananBus() {
-    printf(">> Laporan Perjalanan Bus (belum diimplementasi)\n");
-}
-
-void KelolaTerminal() {
-    printf(">> Manajemen Terminal (belum diimplementasi)\n");
-}
-
-void KelolaAkunPelanggan() {
-    printf(">> Manajemen Akun Pelanggan (belum diimplementasi)\n");
 }
 
 void RiwayatTransaksi() {
