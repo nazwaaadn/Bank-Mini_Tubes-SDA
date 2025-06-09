@@ -169,7 +169,7 @@ void pesanTiket(NodeUser* user) {
 
 void batalkanTiket(const char* idTiket) {
     FILE* in = fopen("FileManajemen/tiket.txt", "r");
-    FILE* out = fopen("tiket_temp.txt", "w");
+    FILE* out = fopen("FileManajemen/tiket_temp.txt", "w");
     if (!in || !out) {
         printf("Gagal membuka file.\n");
         return;
@@ -194,8 +194,8 @@ void batalkanTiket(const char* idTiket) {
     fclose(in);
     fclose(out);
 
-    remove("tiket.txt");
-    rename("tiket_temp.txt", "tiket.txt");
+    remove("FileManajemen/tiket.txt");
+    rename("FileManajemen/tiket_temp.txt", "FileManajemen/tiket.txt");
 
     if (found)
         printf("Tiket %s berhasil dibatalkan.\n", idTiket);

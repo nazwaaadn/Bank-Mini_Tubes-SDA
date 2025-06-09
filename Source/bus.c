@@ -371,7 +371,7 @@ void saveSingleBusToFile(DataBus bus) {
         curr = curr->next;
     }
 
-    fprintf(file, "%s|%s|%s|%d|%c|%s|%02d:%02d|%02d:%02d\n",
+        fprintf(file, "%s|%s|%s|%d|%c|%s|%02d:%02d|%02d:%02d|%d\n",
         bus.idBus,
         bus.platNomor,
         bus.namaSupir,
@@ -379,8 +379,10 @@ void saveSingleBusToFile(DataBus bus) {
         bus.kelas,
         ruteStr,
         wktBrkStruct.tm_hour, wktBrkStruct.tm_min,
-        wktTbaStruct.tm_hour, wktTbaStruct.tm_min
+        wktTbaStruct.tm_hour, wktTbaStruct.tm_min,
+        bus.status 
     );
+
 
     fclose(file);
 }
@@ -410,6 +412,7 @@ void printAllBus() {
         char *keberangkatan = strtok(NULL, "|");
         char *kedatangan = strtok(NULL, "|");
         char *status = strtok(NULL, "|");
+
 
         if (!idBus || !platNomor || !namaSupir || !kapasitasStr || !kelasStr || !rute || !keberangkatan || !kedatangan || !status) {
             continue;
