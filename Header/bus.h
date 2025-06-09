@@ -27,6 +27,7 @@ typedef struct {
     time_t kedatangan;
     int kapasitas;
     char kelas;
+    boolean status; // 0 untuk aktif, 1 untuk tidak aktif   
 } DataBus;
 
 // Node dalam linked list daftar bus
@@ -57,7 +58,7 @@ void deleteBus(char idBus[]);
 void saveSingleBusToFile(DataBus bus);
 boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** headRute, time_t waktuTu);
 void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize);
-NodeRute* stringToRute(char* rute); // Fungsi baru untuk konversi string ke linked list rute
+NodeRute* strToRute(char* rute); // Fungsi baru untuk konversi string ke linked list rute
 void loadAllBusFromFile(); // Fungsi untuk memuat semua bus dari file
 void bersihkanDataBus(); // Fungsi untuk membersihkan data bus
 boolean PreOrder(terminalTree P, address idx, char* tujuan);

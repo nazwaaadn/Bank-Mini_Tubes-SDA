@@ -7,7 +7,7 @@ void CreateTerminal(terminalTree X)
 {
 
     X[0].info = "Dago"; X[0].ps_fs = 1;               
-    X[1].info = "Simpang Dago"; X[1].ps_fs = 6; X[1].ps_nb = 2; X[1].ps_pr = 0;  
+    X[1].info = "SimpangDago"; X[1].ps_fs = 6; X[1].ps_nb = 2; X[1].ps_pr = 0;  
     X[2].info = "Pasteur"; X[2].ps_fs = 8; X[2].ps_nb = 3; X[2].ps_pr = 0; 
     X[3].info = "Gasibu"; X[3].ps_fs = 9; X[3].ps_nb = 4; X[3].ps_pr = 0; 
     X[4].info = "Gedung Sate"; X[4].ps_fs = 10; X[4].ps_nb = 5; X[4].ps_pr = 0; 
@@ -15,8 +15,8 @@ void CreateTerminal(terminalTree X)
     X[6].info = "Ciumbuleuit"; X[6].ps_fs = 12; X[6].ps_nb = 7; X[6].ps_pr = 1; 
     X[7].info = "Setiabudi"; X[7].ps_fs = 13; X[7].ps_nb = nil; X[7].ps_pr = 1; 
     X[8].info = "Sukajadi"; X[8].ps_fs = 14; X[8].ps_nb = nil; X[8].ps_pr = 2; 
-    X[9].info = "Cibeunying Kaler"; X[9].ps_fs = 15; X[9].ps_nb = nil; X[9].ps_pr = 3; 
-    X[10].info = "Cibeunying Kidul"; X[10].ps_fs = 16; X[10].ps_nb = nil; X[10].ps_pr = 4;  
+    X[9].info = "CibeunyingKaler"; X[9].ps_fs = 15; X[9].ps_nb = nil; X[9].ps_pr = 3; 
+    X[10].info = "CibeunyingKidul"; X[10].ps_fs = 16; X[10].ps_nb = nil; X[10].ps_pr = 4;  
     X[11].info = "Balubur"; X[11].ps_fs = 17; X[11].ps_nb = nil; X[11].ps_pr = 5; 
     X[12].info = "Punclut"; X[12].ps_fs = 18; X[12].ps_nb = nil; X[12].ps_pr = 6; 
     X[13].info = "Ledeng"; X[13].ps_fs = 19; X[13].ps_nb = nil; X[13].ps_pr = 7; 

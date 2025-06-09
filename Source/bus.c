@@ -116,6 +116,7 @@ NodeBus* inputDataBus(terminalTree T, int root) {
         printf("❌ Terminal awal tidak ditemukan.\n");
     }
 
+    busBaru->Info.status = 0; // Status bus aktif
     busBaru->next = NULL;
     saveSingleBusToFile(busBaru->Info); // Simpan ke file
     return busBaru;
@@ -315,7 +316,7 @@ NodeBus* searchBusByID(char idBus[]) {
             strcpy(temp.namaSupir, nama);
             temp.kapasitas = kapasitas;
             temp.kelas = kelas;
-            temp.rute = stringToRute(rute);
+            temp.rute = strToRute(rute);
 
             int jam, menit;
             struct tm waktu = {0};
@@ -421,8 +422,8 @@ void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize) {
 }
 
 // Fungsi baru: konversi dari string ke linked list rute
-// Pseudocode for stringToRute function fix
-NodeRute* stringToRute(char* rute) {
+// Pseudocode for strToRute function fix
+NodeRute* strToRute(char* rute) {
     NodeRute* head = NULL;
     NodeRute* tail = NULL;
 
@@ -506,18 +507,16 @@ void printAllBus() {
         return;
     }
 
-    char line[256];
-    printf("=============================================================================================================================\n");
-    printf("| %-6s | %-12s | %-15s | %-50s | %-9s | %-5s | %-10s | %-10s |\n",
-           "ID", "Plat", "Supir", "Rute", "Kapasitas", "Kelas", "Brkt", "Tiba");
-    printf("=============================================================================================================================\n");
-
+    char line[1024]; // buffer diperbesar untuk menampung rute panjang
+    printf("===========================================================================================================================================================================\n");
+    printf("| %-6s | %-10s | %-15s | %-9s | %-5s | %-60s | %-8s | %-8s |\n",
+           "ID", "Plat", "Supir", "Kapasitas", "Kelas", "Rute", "Brkt", "Tiba");
+    printf("===========================================================================================================================================================================\n");
 
     while (fgets(line, sizeof(line), file)) {
-        // Contoh baris:
-        // Bus01|ahjak|ajkaj|30|C|DagoSimpang DagoCiumbuleuitPunclutLembang|13:20|13:20
+        // Buang newline di akhir
+        line[strcspn(line, "\n")] = 0;
 
-        // Pisah line pakai strtok berdasarkan '|'
         char *idBus = strtok(line, "|");
         char *platNomor = strtok(NULL, "|");
         char *namaSupir = strtok(NULL, "|");
@@ -525,7 +524,7 @@ void printAllBus() {
         char *kelasStr = strtok(NULL, "|");
         char *rute = strtok(NULL, "|");
         char *keberangkatan = strtok(NULL, "|");
-        char *kedatangan = strtok(NULL, "|\n");
+        char *kedatangan = strtok(NULL, "|");
 
         if (!idBus || !platNomor || !namaSupir || !kapasitasStr || !kelasStr || !rute || !keberangkatan || !kedatangan) {
             continue; // baris tidak lengkap, skip
@@ -534,20 +533,21 @@ void printAllBus() {
         int kapasitas = atoi(kapasitasStr);
         char kelas = kelasStr[0];
 
-        printf("| %-8s | %-12s | %-20s | %-50s | %-9d | %-5c | %-20s | %-20s |\n",
-            idBus,
-            platNomor,
-            namaSupir,
-            rute,
-            kapasitas,
-            kelas,
-            keberangkatan,
-            kedatangan);
+        printf("| %-6s | %-10s | %-15s | %-9d | %-5c | %-60s | %-8s | %-8s |\n",
+               idBus,
+               platNomor,
+               namaSupir,
+               kapasitas,
+               kelas,
+               rute,
+               keberangkatan,
+               kedatangan);
     }
 
-    printf("=========================================================================================================================\n");
+    printf("===========================================================================================================================================================================\n");
     fclose(file);
 }
+
 
 boolean PreOrder(terminalTree P, address idx, char* tujuan) {
     if (idx == nil) return false;
@@ -583,8 +583,9 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
             return false;
         }
 
-        // Salin nama terminal dan hitung waktu keberangkatan untuk pergi
+        // Salin nama terminal dan tambahkan "(pergi)" untuk rute pergi
         strcpy(newNode->namaTerminal, T[idx].info);
+        strcat(newNode->namaTerminal, "(pergi)"); // Menambahkan "(pergi)" ke nama terminal
         struct tm tempWaktu = *localtime(&waktuTujuan);
         tempWaktu.tm_min -= offsetPergi;  // Mengurangi waktu untuk setiap terminal
         newNode->waktubrgkt = mktime(&tempWaktu);
@@ -601,8 +602,9 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
             return true;  // Rute pergi sudah selesai, lanjutkan
         }
 
-        // Salin nama terminal untuk rute balik
+        // Salin nama terminal dan tambahkan "(pulang)" untuk rute balik
         strcpy(balikNode->namaTerminal, T[idx].info);
+        strcat(balikNode->namaTerminal, "(pulang)"); // Menambahkan "(pulang)" ke nama terminal
         struct tm waktuBalik = *localtime(&waktuTujuan);
         waktuBalik.tm_min += offsetPulang;  // Menambahkan waktu untuk perjalanan balik
         balikNode->waktubrgkt = mktime(&waktuBalik);
@@ -629,6 +631,7 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
             }
 
             strcpy(newNode->namaTerminal, T[idx].info);
+            strcat(newNode->namaTerminal, " (pergi)"); // Menambahkan "(pergi)" ke nama terminal
             struct tm tempWaktu = *localtime(&waktuTujuan);
             tempWaktu.tm_min -= offsetPergi;
             newNode->waktubrgkt = mktime(&tempWaktu);
@@ -646,6 +649,7 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
                 }
 
                 strcpy(balikNode->namaTerminal, T[idx].info);
+                strcat(balikNode->namaTerminal, " (pulang)"); // Menambahkan "(pulang)" ke nama terminal
                 struct tm waktuBalik = *localtime(&waktuTujuan);
                 waktuBalik.tm_min += offsetPulang;
                 balikNode->waktubrgkt = mktime(&waktuBalik);

@@ -15,6 +15,7 @@ typedef struct {
     char status[20]; // aktif / cancelled
 } DataTiket;
 
+extern NodeUser* currentUser; // Pointer ke pengguna yang sedang login
 // Forward declaration (karena NodeBus didefinisikan di tempat lain)
 struct NodeBus;
 
@@ -42,5 +43,9 @@ void batalkanTiket(const char* idTiket);
 void simpanTiketKeFile(DataTiket tiket);
 void printTiketAktifByUser();
 void printAllTiketByUser();
+void bacaDataTiket(char* filename, DataTiket tiket[], int* tiketCount);
+void bacaDataBus(char* filename, DataBus buses[], int* busCount);
+void simulasiPerjalananUser(DataBus* bus, DataTiket* tiket, int tiketCount, NodeUser* user);
+const char* cariIdBusByUser(NodeUser* user, DataTiket* tiket, int tiketCount);
 
 #endif
