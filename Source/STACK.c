@@ -26,16 +26,3 @@ char* pop(Stack* stack) {
     stack->top--;
     return terminal;
 }
-
-// Fungsi untuk memeriksa apakah terminal mengandung kata "(pergi)"
-int containsPergi(char* terminal) {
-    return strstr(terminal, "(pergi)") != NULL;
-}
-
-// Fungsi untuk menghapus kata "(pergi)" dari nama terminal
-void removePergi(char* terminal) {
-    char* ptr = strstr(terminal, "(pergi)");
-    if (ptr) {
-        *ptr = '\0';  // Menghapus kata "(pergi)"
-    }
-}

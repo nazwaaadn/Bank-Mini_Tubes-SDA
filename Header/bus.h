@@ -46,21 +46,13 @@ boolean isBusListEmpty();
 NodeBus* alokasiNodeBus(DataBus busData);
 void freeBus(NodeBus* busNode);
 NodeBus* inputDataBus(terminalTree T, int root);
-void tambahRute(NodeRute** head, const char* nama);
-void editRute(char idBus[], DataBus *busBaru);
 void hapusRute(NodeRute** head);
-void inputDataBusBaru(DataBus *busBaru);
-void hapusNewline(char *str);
-void editBus(char idBus[]);
 void printAllBus(); 
-NodeBus* searchBusByID(char idBus[]);
 void deleteBus(char idBus[]);
 void saveSingleBusToFile(DataBus bus);
 boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** headRute, time_t waktuTu);
-void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize);
+// void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize);
 NodeRute* strToRute(char* rute); // Fungsi baru untuk konversi string ke linked list rute
-void loadAllBusFromFile(); // Fungsi untuk memuat semua bus dari file
-void bersihkanDataBus(); // Fungsi untuk membersihkan data bus
 boolean PreOrder(terminalTree P, address idx, char* tujuan);
 
 #endif

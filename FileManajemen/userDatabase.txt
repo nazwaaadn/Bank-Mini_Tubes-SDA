@@ -2,3 +2,4 @@ tsinan;tsinan123;cimahi;082111111111
 Nazwa;nazwa123;Bandung;0895337539906
 Rose;Rose123;Korea Selatan;0897186516
 Ruri Riyanti;ruri123;Cimahi;089219767152
+Rian;Rian123;Bojongsoang;08966727181

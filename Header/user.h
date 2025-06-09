@@ -17,8 +17,7 @@ typedef struct
 } DataUser;
 
 typedef struct NodeUser {
-    DataUser Info;               
-    struct NodeTiket* transaksi;         
+    DataUser Info;                  
     struct NodeUser* next;      
 } NodeUser;
 
