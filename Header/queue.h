@@ -25,9 +25,11 @@ void EnQueue(Queue *Q, DataBus X);
 void deQueue(Queue *Q, DataBus *X);
 
 /* ===== Fungsi Bantu Internal ===== */
-void Alokasi(DataBus X, NodeBus **P);
-void DeAlokasi(NodeBus *P);
+NodeBus* AlokasiQueue(DataBus X);
+void DeAlokasiQueue(NodeBus *P);
 void InsertLast(Queue *Q, NodeBus *P);
-void DelFirst(Queue *Q, NodeBus **P); // Tambahkan ini karena dipakai di deQueue()
+void DelFirst(Queue *Q, NodeBus **P);
+
+void AntriBus(Queue *Q);
 
 #endif

@@ -49,7 +49,7 @@ void AdminMenu()
     printf("|            MENU ADMIN           |\n");
     printf("===================================\n");
     printf("1. Manajemen Bus\n");
-    printf("2. Release Bus dari Terminal\n");
+    printf("2. Antri & Release Bus\n");
     printf("3. Lihat Terminal\n");
     printf("4. Riwayat Transaksi Tiket\n");
     printf("5. Keluar\n");
@@ -57,18 +57,6 @@ void AdminMenu()
     printf("Masukkan pilihan Anda: ");
 }
 
-// void ManajemenTerminal()
-// {
-//     printf("===============================================\n");
-//     printf("|            MANAJEMEN TERMINAL               |\n");
-//     printf("===============================================\n");
-//     printf("1. Tambah Terminal Baru\n");
-//     printf("2. Hapus Terminal\n");
-//     printf("3. Lihat Daftar Terminal\n");
-//     printf("4. Kembali ke Menu Utama\n");
-//     printf("===============================================\n");
-//     printf("Masukkan pilihan Anda: ");
-// }
 
 void ManajemenBus()
 {
@@ -77,9 +65,8 @@ void ManajemenBus()
     printf("===============================================\n");
     printf("1. Tambah Bus Baru\n");
     printf("2. Hapus Bus\n");
-    printf("3. Edit Data Bus\n");
-    printf("4. Lihat Daftar Bus\n");
-    printf("5. Kembali ke Menu Utama\n");
+    printf("3. Lihat Daftar Bus\n");
+    printf("4. Kembali ke Menu Utama\n");
     printf("===============================================\n");
 }
 

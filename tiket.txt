@@ -1,4 +1,0 @@
-TKT1749421320|tsinan|Lembang(pulang)|Punclut(pulang)|Bus02|cancelled
-TKT1749421360|tsinan|Lembang(pulang)|Ciumbuleuit(pulang)|Bus02|aktif
-TKT1749421418|Rose|Dago(pergi)|SimpangDago(pergi)|Bus02|aktif
-TKT1749421452|Nazwa|Dago(pergi)|Lembang(pergi)|Bus02|aktif
