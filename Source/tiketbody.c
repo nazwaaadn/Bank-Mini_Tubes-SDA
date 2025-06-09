@@ -242,39 +242,6 @@ void pesanTiket(NodeUser* user) {
     printf("ID Tiket: %s\n", tiketBaru.idTiket);
 }
 
-int deleteTiketByID(char idTiket[]) {
-    NodeTiket *current = HeadTiket;
-    NodeTiket *prev = NULL;
-
-    while (current != NULL) {
-        if (strcmp(current->Info.idTiket, idTiket) == 0) {
-            if (prev == NULL) {
-                HeadTiket = current->next;
-            } else {
-                prev->next = current->next;
-            }
-            free(current);
-            printf("Tiket dengan ID %s berhasil dihapus.\n", idTiket);
-            return 1;
-        }
-        prev = current;
-        current = current->next;
-    }
-
-    printf("Tiket dengan ID %s tidak ditemukan.\n", idTiket);
-    return 0;
-}
-
-void deleteAllTiket() {
-    NodeTiket* current = HeadTiket;
-    while (current != NULL) {
-        NodeTiket* temp = current;
-        current = current->next;
-        free(temp);
-    }
-    HeadTiket = NULL;
-    printf("Semua tiket telah dihapus.\n");
-}
 
 void batalkanTiket(const char* idTiket) {
     FILE* in = fopen("tiket.txt", "r");
@@ -409,6 +376,7 @@ void printAllTiketByUser() {
     fclose(f);
 }
 
+NodeUser* user = NULL;
 void UserMenu(NodeUser* user) {
     int pilihan;
     char buffer[10];
@@ -460,8 +428,10 @@ void UserMenu(NodeUser* user) {
                 break;
             case 5:
                 printf("Simulasi perjalanan Anda:\n");
+                user = currentUser;
+                printf("Memulai simulasi perjalanan untuk pengguna: %s\n", user->Info.nama);
 
-                const char* idBus = cariIdBusByUser(currentUser, tiket, tiketCount);
+                const char* idBus = cariIdBusByUser(user, tiket, tiketCount);
 
                 if (idBus == NULL) {
                     printf("Tiket aktif tidak ditemukan untuk pengguna %s.\n", currentUser->Info.nama);
@@ -481,10 +451,9 @@ void UserMenu(NodeUser* user) {
                     printf("Bus dengan ID %s tidak ditemukan.\n", idBus);
                     return;
                 }
-                user = currentUser; // Menggunakan pengguna yang sedang login
 
                 // Melanjutkan simulasi perjalanan dengan bus yang ditemukan
-                simulasiPerjalananUser(bus, tiket, tiketCount, user);  // Start simulation
+                simulasiPerjalananUser(bus, tiket, tiketCount);  // Start simulation
                 break;
             case 6:
                 printf("Terima kasih telah menggunakan layanan kami!\n");
@@ -511,19 +480,19 @@ const char* cariIdBusByUser(NodeUser* currentUser, DataTiket* tiket, int tiketCo
 }
 
 
-void simulasiPerjalananUser(DataBus* buses, DataTiket* tiket, int tiketCount, NodeUser* user) {
-    const char* idBus = cariIdBusByUser(user, tiket, tiketCount);  // Mencari ID Bus berdasarkan tiket pengguna
+void simulasiPerjalananUser(DataBus* buses, DataTiket* tiket, int tiketCount) {
+    user = currentUser;
+    const char* idBus = cariIdBusByUser(user, tiket, tiketCount);
 
     if (idBus == NULL) {
         printf("Tidak ada tiket aktif untuk pengguna %s.\n", user->Info.nama);
         return;
     }
 
-    // Mencari bus yang sesuai dengan ID Bus
     DataBus* bus = NULL;
     for (int i = 0; i < 10; i++) {
         if (strcmp(buses[i].idBus, idBus) == 0) {
-            bus = &buses[i];  // Menyimpan pointer ke bus yang ditemukan
+            bus = &buses[i];
             break;
         }
     }
@@ -533,85 +502,70 @@ void simulasiPerjalananUser(DataBus* buses, DataTiket* tiket, int tiketCount, No
         return;
     }
 
-    // Stack untuk menyimpan terminal yang mengandung "(pergi)"
-    Stack terminalStack;
-    initStack(&terminalStack);
-
-    // Lanjutkan dengan simulasi perjalanan
-    NodeRute* currentRute = bus->rute;
-    int terminalCount = 0;
-    int userReachedDestination = 0;
-
-    // Check if the bus is allowed to depart
     if (bus->status != 1) {
         printf("Bus %s tidak dapat melakukan perjalanan karena status tidak aktif.\n", bus->idBus);
         return;
     }
 
+    Stack terminalStack;
+    initStack(&terminalStack);
+
     printf("Simulasi perjalanan bus ID: %s\n", bus->idBus);
 
-    // Loop untuk setiap terminal dalam rute bus
+    NodeRute* currentRute = bus->rute;
+    int userReachedDestination = 0;
+
     while (currentRute != NULL) {
-        // Cek apakah terminal mengandung "(pergi)"
-        if (containsPergi(currentRute->namaTerminal)) {
-            // Menghilangkan "(pergi)" dan push ke stack
-            removePergi(currentRute->namaTerminal);
-            push(&terminalStack, currentRute->namaTerminal);  // Push terminal tanpa "(pergi)" ke stack
+        // Kalau terminal mengandung "(pergi)", push ke stack
+        if (strstr(currentRute->namaTerminal, "(pergi)") != NULL) {
+            push(&terminalStack, currentRute->namaTerminal);
             printf("Terminal %s\n", currentRute->namaTerminal);
         }
 
-        int penumpangTurun = 0;
         int penumpangNaik = 0;
+        int penumpangTurun = 0;
 
-        // Mengecek penumpang yang turun dan naik
         for (int i = 0; i < tiketCount; i++) {
-            // Penumpang yang turun
-            if (strcmp(tiket[i].tujuan, currentRute->namaTerminal) == 0 &&
-                strcmp(tiket[i].idBus, bus->idBus) == 0 &&
-                strcmp(tiket[i].status, "aktif") == 0) {
+            if (strcmp(tiket[i].idBus, bus->idBus) != 0 || strcmp(tiket[i].status, "aktif") != 0)
+                continue;
+
+            // Cek naik
+            if (strcmp(tiket[i].awal, currentRute->namaTerminal) == 0) {
+                penumpangNaik++;
+                if (strcmp(tiket[i].namaPenumpang, currentUser->Info.nama) == 0)
+                    printf("Anda naik di terminal %s.\n", currentRute->namaTerminal);
+            }
+
+            // Cek turun
+            if (strcmp(tiket[i].tujuan, currentRute->namaTerminal) == 0) {
                 penumpangTurun++;
                 strcpy(tiket[i].status, "done");
-                printf("Penumpang turun: %s \n", tiket[i].namaPenumpang);
-                
-                if (strcmp(tiket[i].namaPenumpang, user->Info.nama) == 0) {
+
+                if (strcmp(tiket[i].namaPenumpang, currentUser->Info.nama) == 0) {
                     printf("Anda turun di terminal %s.\n", currentRute->namaTerminal);
                     userReachedDestination = 1;
                 }
             }
-
-            // Penumpang yang naik
-            if (strcmp(tiket[i].awal, currentRute->namaTerminal) == 0 &&
-                strcmp(tiket[i].idBus, bus->idBus) == 0 &&
-                strcmp(tiket[i].status, "aktif") == 0) {
-                penumpangNaik++;
-                printf("Penumpang naik: %s \n", tiket[i].namaPenumpang);
-                
-                if (strcmp(tiket[i].namaPenumpang, user->Info.nama) == 0) {
-                    printf("Anda naik di terminal %s.\n", currentRute->namaTerminal);
-                }
-            }
         }
 
-        printf("Bus %s berhenti di terminal %s, %d penumpang turun, %d penumpang naik.\n\n", 
-                bus->idBus, currentRute->namaTerminal, penumpangTurun, penumpangNaik);
+        printf("Bus %s berhenti di terminal %s, %d penumpang turun, %d penumpang naik.\n\n",
+               bus->idBus, currentRute->namaTerminal, penumpangTurun, penumpangNaik);
 
         if (userReachedDestination) {
-            printf("Perjalanan selesai. Anda sudah mencapai tujuan Anda di terminal %s.\n", currentRute->namaTerminal);
+            printf("Perjalanan selesai. Anda sudah mencapai tujuan di terminal %s.\n", currentRute->namaTerminal);
             break;
         }
 
-        // Jika terminal mengandung "(pulang)", lakukan pop untuk terminal yang sudah diproses
+        // Jika terminal mengandung "(pulang)", pop dari stack
         if (strstr(currentRute->namaTerminal, "(pulang)") != NULL) {
             char* poppedTerminal = pop(&terminalStack);
             if (poppedTerminal) {
-                printf("Terminal %s\n", 
-                       poppedTerminal);
-                free(poppedTerminal);  // Menghapus memory yang dialokasikan
+                printf("Terminal %s\n", poppedTerminal);
+                free(poppedTerminal);
             }
         }
 
-        currentRute = currentRute->next; 
-        terminalCount++;
+        currentRute = currentRute->next;
     }
 
     if (!userReachedDestination) {
