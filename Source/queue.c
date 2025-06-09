@@ -1,100 +1,82 @@
-/*File body untuk ADT Queue*/
-//Dibuat tanggal 28-3-2013
-
 #include "queue.h"
 #include <stdio.h>
-#include "bus.h"
+#include <stdlib.h>
 
-NodeBus* AlokasiQueue(DataBus X, NodeBus **P)
-{
+NodeBus* AlokasiQueue(DataBus X) {
     NodeBus *P = (NodeBus *)malloc(sizeof(NodeBus));
-    if (*P != NULL) {
-        Info(*P) = X;
-        Next(*P) = Nil;
+    if (P != NULL) {
+        Info(P) = X;
+        Next(P) = NULL;
     } else {
         printf("Alokasi Queue gagal\n");
     }
     return P;
 }
 
-void DeAlokasiQueue(NodeBus *P)
-{
+void DeAlokasiQueue(NodeBus *P) {
     free(P);
 }
 
-void InsertLast(Queue *Q, NodeBus *P)
-{
-    if (is_Empty(*Q))
-    {
+void InsertLast(Queue *Q, NodeBus *P) {
+    if (is_Empty(*Q)) {
         Front(*Q) = P;
         Rear(*Q) = P;
     } else {
         Next(Rear(*Q)) = P; 
         Rear(*Q) = P;      
     }
-    
 }
 
-void DelFirst(Queue *Q, NodeBus **P)
-{
+void DelFirst(Queue *Q, NodeBus **P) {
     *P = Front(*Q);
     if (Front(*Q) == Rear(*Q)) {
-        Front(*Q) = Nil;
-        Rear(*Q) = Nil;
+        Front(*Q) = NULL;
+        Rear(*Q) = NULL;
     } else {
         Front(*Q) = Next(*P);
     }
-    Next(*P) = Nil;
+    Next(*P) = NULL;
 }
 
-void CreateQueue (Queue *Q)
-{
-	Front(*Q) = Nil;
-    Rear(*Q) = Nil;
+void CreateQueue(Queue *Q) {
+    Front(*Q) = NULL;
+    Rear(*Q) = NULL;
 }
 
-/*Memeriksa apakah queue kosong */
-boolean is_Empty (Queue Q)
-{
-	 return (Front(Q) == Nil && Rear(Q) == Nil);
+boolean is_Empty(Queue Q) {
+    return (Front(Q) == NULL && Rear(Q) == NULL);
 }
 
-/*Memeriksa apakah queue penuh */
 boolean is_Full(Queue Q) {
     NodeBus* P = Front(Q);
     int count = 0;
-
-    while (P != Nil && count < NBElement) {
+    while (P != NULL && count < NBElement) {
         count++;
         P = Next(P);
     }
-
-    return count == 10; // Jika elemen sudah mencapai 10, return true
+    return count == NBElement;
 }
 
 void EnQueue(Queue *Q, DataBus X) {
-    NodeBus *P;
-    P = AlokasiQueue(X, &P);
-    if(!is_Full(*Q)) {
-            if (is_Empty(*Q)) {
-                Front(*Q) = P;
-                Rear(*Q) = P;
-            } else {
-                InsertLast(Q, P);   
-            }
+    if(is_Full(*Q)) {
+        printf("Queue penuh, tidak bisa menambah bus!\n");
+        return;
     }
+    NodeBus *P = AlokasiQueue(X);
+    if(P == NULL) {
+        printf("Gagal alokasi memori!\n");
+        return;
+    }
+    InsertLast(Q, P);
 }
 
-/* Menghapus elemen dari depan queue */
 void deQueue(Queue *Q, DataBus *X) {
     if (is_Empty(*Q)) {
         printf("Queue kosong\n");
         return;
     }
-
     NodeBus *P;
-    DelFirst(Q, &P);  // Memanggil prosedur DelFirst
+    DelFirst(Q, &P);
     *X = Info(P); 
     DeAlokasiQueue(P);
 }
-
