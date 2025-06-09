@@ -1,32 +1,27 @@
+// stack.h
+
 #ifndef STACK_H
 #define STACK_H
-#define Info(P) (P)->info
-#define Next(P) (P)->next
-#define Nil NULL
-#define Top(S) (S)->Top
 
-#include "terminal.h"
-#include "boolean.h"
-#include <stdlib.h>
-
-typedef struct tElmtStack *addressStack;
-typedef struct tElmtStack {
-    nbtree info;
-    addressStack next;
-} ElmtStack;
-
-typedef struct {
-    addressStack Top;
+// Struktur Stack untuk menyimpan nama terminal
+typedef struct Stack {
+    char* terminals[100];  // Array untuk menyimpan nama terminal
+    int top;  // Menyimpan indeks top stack
 } Stack;
 
-/* ==== FUNGSI & PROSEDUR ==== */
-addressStack AlokasiStack(nbtree X);
-void DealokasiStack(addressStack P);
-void CreateEmptyStack(Stack *S);
-boolean IsEmptyStack(Stack S);
-void Push(Stack *S, nbtree X);
-void Pop(Stack *S, nbtree *X);
-void InsertTop(Stack *S, addressStack P);
-void DelTop(Stack *S, addressStack *P);
+// Fungsi untuk menginisialisasi stack
+void initStack(Stack* stack);
 
-#endif
+// Fungsi untuk menambahkan terminal ke dalam stack
+void push(Stack* stack, char* terminal);
+
+// Fungsi untuk mengeluarkan terminal dari stack
+char* pop(Stack* stack);
+
+// Fungsi untuk memeriksa apakah terminal mengandung kata "(pergi)"
+int containsPergi(char* terminal);
+
+// Fungsi untuk menghapus kata "(pergi)" dari nama terminal
+void removePergi(char* terminal);
+
+#endif // STACK_H

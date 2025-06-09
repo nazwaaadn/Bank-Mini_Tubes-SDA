@@ -5,6 +5,7 @@
 #include "../Header/tiket.h"
 #include "../Header/bus.h"
 #include "../Header/terminal.h"
+#include "../Header/stack.h"
 #include <math.h>
 #include <ctype.h>
 
@@ -57,7 +58,7 @@ void muatDataBus() {
         strcpy(bus.namaSupir, namaSupir);
         bus.kapasitas = kapasitas;
         bus.kelas = kelas;
-        bus.rute = stringToRute(ruteStr);
+        bus.rute = strToRute(ruteStr);
 
         int jam, menit;
         struct tm waktu = {0};
@@ -200,79 +201,6 @@ void printAllTiket() {
     fclose(f);
 }
 
-NodeBus* searchBusByIDFromFile(const char* idTargetRaw) {
-    FILE *file = fopen("FileManajemen/dataBus.txt", "r");
-    if (!file) {
-        printf("Gagal membuka FileManajemen/dataBus.txt\n");
-        return NULL;
-    }
-
-    char idTarget[20];
-    strncpy(idTarget, idTargetRaw, sizeof(idTarget));
-    idTarget[sizeof(idTarget) - 1] = '\0';
-
-    // Hapus spasi belakang
-    for (int i = strlen(idTarget) - 1; i >= 0 && isspace((unsigned char)idTarget[i]); --i)
-        idTarget[i] = '\0';
-    // Hapus spasi depan
-    int start3 = 0;
-    while (isspace((unsigned char)idTarget[start3])) start3++;
-    if (start3 > 0) memmove(idTarget, idTarget + start3, strlen(idTarget + start3) + 1);
-
-    char line[512];
-    while (fgets(line, sizeof(line), file)) {
-        char idBus[20], platNomor[30], namaSupir[50], ruteStr[200], waktuBrk[6], waktuTba[6];
-        int kapasitas;
-        char kelas;
-
-        line[strcspn(line, "\r\n")] = '\0';
-
-        int jumlahField = sscanf(line, " %19[^|] | %29[^|] | %49[^|] | %d | %c | %199[^|] | %5[^|] | %5[^|]",
-                                 idBus, platNomor, namaSupir, &kapasitas, &kelas,
-                                 ruteStr, waktuBrk, waktuTba);
-        if (jumlahField != 8) continue;
-
-        // Hapus spasi depan & belakang idBus
-        int start2 = 0;
-        while (isspace((unsigned char)idBus[start2])) start2++;
-        if (start2 > 0) memmove(idBus, idBus + start2, strlen(idBus + start2) + 1);
-        for (int i = strlen(idBus) - 1; i >= 0 && isspace((unsigned char)idBus[i]); --i)
-            idBus[i] = '\0';
-
-        if (strcmp(idBus, idTarget) == 0) {
-            DataBus bus;
-            strcpy(bus.idBus, idBus);
-            strcpy(bus.platNomor, platNomor);
-            strcpy(bus.namaSupir, namaSupir);
-            bus.kapasitas = kapasitas;
-            bus.kelas = kelas;
-            bus.rute = stringToRute(ruteStr);
-
-            struct tm waktu = {0};
-            int jam, menit;
-            sscanf(waktuBrk, "%d:%d", &jam, &menit);
-            waktu.tm_year = 123;
-            waktu.tm_mon = 0;
-            waktu.tm_mday = 1;
-            waktu.tm_hour = jam;
-            waktu.tm_min = menit;
-            bus.keberangkatan = mktime(&waktu);
-
-            sscanf(waktuTba, "%d:%d", &jam, &menit);
-            waktu.tm_hour = jam;
-            waktu.tm_min = menit;
-            bus.kedatangan = mktime(&waktu);
-
-            NodeBus* node = alokasiNodeBus(bus);
-            fclose(file);
-            return node;
-        }
-    }
-
-    fclose(file);
-    return NULL;
-}
-
 
 
 // Fungsi simulasi pemesanan tiket oleh user
@@ -293,21 +221,21 @@ void pesanTiket(NodeUser* user) {
     fgets(tujuan, sizeof(tujuan), stdin);
     tujuan[strcspn(tujuan, "\r\n")] = '\0';
 
-    NodeBus* bus = searchBusByIDFromFile(idBus);
-    if (bus == NULL) {
-        printf("Bus dengan ID '%s' tidak ditemukan.\n", idBus);
-        return;
-    }
+    // NodeBus* bus = searchBusByIDFromFile(idBus);
+    // if (bus == NULL) {
+    //     printf("Bus dengan ID '%s' tidak ditemukan.\n", idBus);
+    //     return;
+    // }
 
     DataTiket tiketBaru;
     snprintf(tiketBaru.idTiket, sizeof(tiketBaru.idTiket), "TKT%ld", time(NULL));
-    strcpy(tiketBaru.idBus, bus->Info.idBus);
+    strcpy(tiketBaru.idBus, idBus);
     strcpy(tiketBaru.namaPenumpang, user->Info.nama);
     strcpy(tiketBaru.awal, awal);  // Gunakan input terminal awal
     strcpy(tiketBaru.tujuan, tujuan);  // Gunakan input terminal tujuan
     strcpy(tiketBaru.status, "aktif");
 
-    insertTiket(tiketBaru, bus);
+    // insertTiket(tiketBaru, bus);
     simpanTiketKeFile(tiketBaru);
 
     printf("Tiket berhasil dipesan!\n");
@@ -481,11 +409,19 @@ void printAllTiketByUser() {
     fclose(f);
 }
 
-void UserMenu(NodeUser* user)
-{
+void UserMenu(NodeUser* user) {
     int pilihan;
     char buffer[10];
     char id[20];
+    DataBus buses[10];  // Array untuk menampung data bus
+    DataTiket tiket[100];  // Array untuk menampung data tiket
+    int tiketCount = 0, busCount = 0;
+
+    // Load bus data
+    bacaDataBus("FileManajemen/dataBus.txt", buses, &busCount);
+    
+    // Load tiket data
+    bacaDataTiket("tiket.txt", tiket, &tiketCount);
 
     do {
         printf("===================================\n");
@@ -493,9 +429,9 @@ void UserMenu(NodeUser* user)
         printf("===================================\n");
         printf("1. Pesan Tiket\n");
         printf("2. Lihat Tiket Aktif\n");
-        printf("3. Riwayat Perjalanan\n");
+        printf("3. Lihat Semua Tiket\n");
         printf("4. Batalkan Tiket\n");
-        printf("5. Keluar\n");
+        printf("5. Perjalanan Anda\n");
         printf("===================================\n");
         printf("Masukkan pilihan Anda: ");
         
@@ -523,10 +459,267 @@ void UserMenu(NodeUser* user)
                 batalkanTiket(id);   // Membatalkan tiket berdasarkan ID
                 break;
             case 5:
-                printf("Keluar dari menu pelanggan.\n");
-                return;  // Keluar dari menu pelanggan dan kembali ke menu utama
+                printf("Simulasi perjalanan Anda:\n");
+
+                const char* idBus = cariIdBusByUser(currentUser, tiket, tiketCount);
+
+                if (idBus == NULL) {
+                    printf("Tiket aktif tidak ditemukan untuk pengguna %s.\n", currentUser->Info.nama);
+                    return;
+                }
+
+                // Mencari bus yang sesuai dengan idBus
+                DataBus* bus = NULL;
+                for (int i = 0; i < busCount; i++) {
+                    if (strcmp(buses[i].idBus, idBus) == 0) {
+                        bus = &buses[i];
+                        break;
+                    }
+                }
+
+                if (bus == NULL) {
+                    printf("Bus dengan ID %s tidak ditemukan.\n", idBus);
+                    return;
+                }
+                user = currentUser; // Menggunakan pengguna yang sedang login
+
+                // Melanjutkan simulasi perjalanan dengan bus yang ditemukan
+                simulasiPerjalananUser(bus, tiket, tiketCount, user);  // Start simulation
+                break;
+            case 6:
+                printf("Terima kasih telah menggunakan layanan kami!\n");
+                return; // Keluar dari menu pelanggan
             default:
                 printf("Pilihan tidak valid.\n");
         }
     } while (1); // Loop terus hingga pengguna memilih untuk keluar
+}
+
+const char* cariIdBusByUser(NodeUser* currentUser, DataTiket* tiket, int tiketCount) {
+    
+    for (int i = 0; i < tiketCount; i++) {
+        // Debugging untuk memastikan tiket yang dicocokkan
+        
+        // Jika nama penumpang sesuai dan status tiket aktif
+        if (strcmp(tiket[i].namaPenumpang, currentUser->Info.nama) == 0 && 
+            strcmp(tiket[i].status, "aktif") == 0) {
+            return tiket[i].idBus;  // Mengembalikan ID Bus dari tiket yang ditemukan
+        }
+    }
+
+    return NULL;  // Jika tidak ditemukan tiket aktif untuk pengguna
+}
+
+
+void simulasiPerjalananUser(DataBus* buses, DataTiket* tiket, int tiketCount, NodeUser* user) {
+    const char* idBus = cariIdBusByUser(user, tiket, tiketCount);  // Mencari ID Bus berdasarkan tiket pengguna
+
+    if (idBus == NULL) {
+        printf("Tidak ada tiket aktif untuk pengguna %s.\n", user->Info.nama);
+        return;
+    }
+
+    // Mencari bus yang sesuai dengan ID Bus
+    DataBus* bus = NULL;
+    for (int i = 0; i < 10; i++) {
+        if (strcmp(buses[i].idBus, idBus) == 0) {
+            bus = &buses[i];  // Menyimpan pointer ke bus yang ditemukan
+            break;
+        }
+    }
+
+    if (bus == NULL) {
+        printf("Bus dengan ID %s tidak ditemukan.\n", idBus);
+        return;
+    }
+
+    // Stack untuk menyimpan terminal yang mengandung "(pergi)"
+    Stack terminalStack;
+    initStack(&terminalStack);
+
+    // Lanjutkan dengan simulasi perjalanan
+    NodeRute* currentRute = bus->rute;
+    int terminalCount = 0;
+    int userReachedDestination = 0;
+
+    // Check if the bus is allowed to depart
+    if (bus->status != 1) {
+        printf("Bus %s tidak dapat melakukan perjalanan karena status tidak aktif.\n", bus->idBus);
+        return;
+    }
+
+    printf("Simulasi perjalanan bus ID: %s\n", bus->idBus);
+
+    // Loop untuk setiap terminal dalam rute bus
+    while (currentRute != NULL) {
+        // Cek apakah terminal mengandung "(pergi)"
+        if (containsPergi(currentRute->namaTerminal)) {
+            // Menghilangkan "(pergi)" dan push ke stack
+            removePergi(currentRute->namaTerminal);
+            push(&terminalStack, currentRute->namaTerminal);  // Push terminal tanpa "(pergi)" ke stack
+            printf("Terminal %s\n", currentRute->namaTerminal);
+        }
+
+        int penumpangTurun = 0;
+        int penumpangNaik = 0;
+
+        // Mengecek penumpang yang turun dan naik
+        for (int i = 0; i < tiketCount; i++) {
+            // Penumpang yang turun
+            if (strcmp(tiket[i].tujuan, currentRute->namaTerminal) == 0 &&
+                strcmp(tiket[i].idBus, bus->idBus) == 0 &&
+                strcmp(tiket[i].status, "aktif") == 0) {
+                penumpangTurun++;
+                strcpy(tiket[i].status, "done");
+                printf("Penumpang turun: %s \n", tiket[i].namaPenumpang);
+                
+                if (strcmp(tiket[i].namaPenumpang, user->Info.nama) == 0) {
+                    printf("Anda turun di terminal %s.\n", currentRute->namaTerminal);
+                    userReachedDestination = 1;
+                }
+            }
+
+            // Penumpang yang naik
+            if (strcmp(tiket[i].awal, currentRute->namaTerminal) == 0 &&
+                strcmp(tiket[i].idBus, bus->idBus) == 0 &&
+                strcmp(tiket[i].status, "aktif") == 0) {
+                penumpangNaik++;
+                printf("Penumpang naik: %s \n", tiket[i].namaPenumpang);
+                
+                if (strcmp(tiket[i].namaPenumpang, user->Info.nama) == 0) {
+                    printf("Anda naik di terminal %s.\n", currentRute->namaTerminal);
+                }
+            }
+        }
+
+        printf("Bus %s berhenti di terminal %s, %d penumpang turun, %d penumpang naik.\n\n", 
+                bus->idBus, currentRute->namaTerminal, penumpangTurun, penumpangNaik);
+
+        if (userReachedDestination) {
+            printf("Perjalanan selesai. Anda sudah mencapai tujuan Anda di terminal %s.\n", currentRute->namaTerminal);
+            break;
+        }
+
+        // Jika terminal mengandung "(pulang)", lakukan pop untuk terminal yang sudah diproses
+        if (strstr(currentRute->namaTerminal, "(pulang)") != NULL) {
+            char* poppedTerminal = pop(&terminalStack);
+            if (poppedTerminal) {
+                printf("Terminal %s\n", 
+                       poppedTerminal);
+                free(poppedTerminal);  // Menghapus memory yang dialokasikan
+            }
+        }
+
+        currentRute = currentRute->next; 
+        terminalCount++;
+    }
+
+    if (!userReachedDestination) {
+        printf("Perjalanan selesai, bus mencapai tujuan akhir tanpa menemukan pengguna.\n");
+    }
+}
+
+// Fungsi untuk membaca data tiket dari file
+void bacaDataTiket(char* filename, DataTiket tiket[], int* tiketCount) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Gagal membuka file.\n");
+        return;
+    }
+
+    char line[512];
+    while (fgets(line, sizeof(line), file)) {
+        // Abaikan baris kosong atau tidak valid
+        if (line[0] == '*' || line[0] == '\n') continue;
+
+        // Komponen data dari file
+        char idTiket[20], namaPengguna[50], terminalNaik[50], terminalTurun[50], idBus[20], status[20];
+
+        // Parsing dari baris file sesuai format yang diberikan
+        int jumlahParsed = sscanf(line, "%[^|]|%[^|]|%[^|]|%[^|]|%[^|]|%s",
+                                   idTiket, namaPengguna, terminalNaik, terminalTurun, idBus, status);
+
+        if (jumlahParsed != 6) {
+            printf("Baris tidak valid, dilewati: %s\n", line);
+            continue;
+        }
+
+        // Simpan data tiket ke array tiket
+        strcpy(tiket[*tiketCount].idTiket, idTiket);
+        strcpy(tiket[*tiketCount].namaPenumpang, namaPengguna);
+        strcpy(tiket[*tiketCount].awal, terminalNaik);
+        strcpy(tiket[*tiketCount].tujuan, terminalTurun);
+        strcpy(tiket[*tiketCount].idBus, idBus);
+        strcpy(tiket[*tiketCount].status, status);
+
+        (*tiketCount)++;
+    }
+
+    fclose(file);
+}
+
+// Fungsi untuk membaca data bus dari file
+void bacaDataBus(char* filename, DataBus buses[], int* busCount) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("Gagal membuka file.\n");
+        return;
+    }
+
+    char line[1024];
+    while (fgets(line, sizeof(line), file)) {
+        if (line[0] == '*' || line[0] == '\n') continue;
+
+        // Buffer untuk parsing
+        char idBus[10], platNomor[15], namaSupir[50], rute[512];
+        char strKeberangkatan[10], strKedatangan[10], strStatus[5];
+        int kapasitas;
+        char kelas;
+
+        int jumlahParsed = sscanf(line, "%[^|]|%[^|]|%[^|]|%d|%c|%[^|]|%[^|]|%[^|]|%s",
+                                  idBus, platNomor, namaSupir, &kapasitas, &kelas,
+                                  rute, strKeberangkatan, strKedatangan, strStatus);
+
+        if (jumlahParsed != 9) {
+            printf("Baris tidak valid, dilewati: %s\n", line);
+            continue;
+        }
+
+        // Simpan ke struct
+        strcpy(buses[*busCount].idBus, idBus);
+        strcpy(buses[*busCount].platNomor, platNomor);
+        strcpy(buses[*busCount].namaSupir, namaSupir);
+        buses[*busCount].kapasitas = kapasitas;
+        buses[*busCount].kelas = kelas;
+        buses[*busCount].rute = strToRute(rute);
+        buses[*busCount].status = atoi(strStatus);  // <-- Tambahan penting
+
+        // Waktu keberangkatan
+        struct tm waktu = {0};
+        int jam, menit;
+
+        if (sscanf(strKeberangkatan, "%d:%d", &jam, &menit) == 2) {
+            waktu.tm_hour = jam;
+            waktu.tm_min = menit;
+            buses[*busCount].keberangkatan = mktime(&waktu);
+        } else {
+            printf("Format waktu keberangkatan tidak valid: %s\n", strKeberangkatan);
+            buses[*busCount].keberangkatan = 0;
+        }
+
+        // Waktu kedatangan
+        waktu = (struct tm){0};
+        if (sscanf(strKedatangan, "%d:%d", &jam, &menit) == 2) {
+            waktu.tm_hour = jam;
+            waktu.tm_min = menit;
+            buses[*busCount].kedatangan = mktime(&waktu);
+        } else {
+            printf("Format waktu kedatangan tidak valid: %s\n", strKedatangan);
+            buses[*busCount].kedatangan = 0;
+        }
+
+        (*busCount)++;
+    }
+
+    fclose(file);
 }

@@ -1,108 +1,84 @@
 #include "../Header/bus.h"
+#include "../Header/tiket.h"
 #include "trial.h"
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
 
-// Fungsi untuk membaca data bus dari file
-void bacaDataBus(char* filename, DataBus buses[], int* busCount) {
-    FILE* file = fopen(filename, "r");
-    if (file == NULL) {
-        printf("Gagal membuka file.\n");
-        return;
+
+
+
+// Fungsi untuk mengonversi string waktu ke struktur waktu
+time_t convertToTimeT(const char* waktuStr) {
+    struct tm waktu = {0};
+    int jam, menit;
+    
+    // Parsing waktu dalam format "HH:MM"
+    if (sscanf(waktuStr, "%d:%d", &jam, &menit) == 2) {
+        waktu.tm_hour = jam;
+        waktu.tm_min = menit;
+        waktu.tm_sec = 0;
+        return mktime(&waktu); // Mengonversi ke time_t
     }
-
-    char line[512];
-    while (fgets(line, sizeof(line), file)) {
-        // Abaikan baris kosong atau tidak valid
-        if (line[0] == '*' || line[0] == '\n') continue;
-
-        // Komponen data dari file
-        char idBus[10], platNomor[15], namaSupir[50], rute[512], strKeberangkatan[10], strKedatangan[10];
-        int kapasitas;
-        char kelas;
-
-        // Parsing dari baris file
-        int jumlahParsed = sscanf(line, "%[^|]|%[^|]|%[^|]|%d|%c|%[^|]|%[^|]|%s",
-                                   idBus, platNomor, namaSupir, &kapasitas, &kelas,
-                                   rute, strKeberangkatan, strKedatangan);
-
-        if (jumlahParsed != 8) {
-            printf("Baris tidak valid, dilewati: %s\n", line);
-            continue;
-        }
-
-        // Simpan data dasar
-        strcpy(buses[*busCount].idBus, idBus);
-        strcpy(buses[*busCount].platNomor, platNomor);
-        strcpy(buses[*busCount].namaSupir, namaSupir);
-        buses[*busCount].kapasitas = kapasitas;
-        buses[*busCount].kelas = kelas;
-        buses[*busCount].rute = stringToRute(rute);
-
-        // Konversi waktu keberangkatan
-        struct tm waktu = {0};
-        int jam, menit;
-
-        // Parsing keberangkatan
-        if (sscanf(strKeberangkatan, "%d:%d", &jam, &menit) == 2) {
-            waktu.tm_hour = jam;
-            waktu.tm_min = menit;
-            waktu.tm_sec = 0;
-            buses[*busCount].keberangkatan = mktime(&waktu);
-        } else {
-            printf("Format waktu keberangkatan tidak valid: %s\n", strKeberangkatan);
-            buses[*busCount].keberangkatan = 0;
-        }
-
-        // Reset waktu dan parsing kedatangan
-        waktu = (struct tm){0};
-        if (sscanf(strKedatangan, "%d:%d", &jam, &menit) == 2) {
-            waktu.tm_hour = jam;
-            waktu.tm_min = menit;
-            waktu.tm_sec = 0;
-            buses[*busCount].kedatangan = mktime(&waktu);
-        } else {
-            printf("Format waktu kedatangan tidak valid: %s\n", strKedatangan);
-            buses[*busCount].kedatangan = 0;
-        }
-
-        (*busCount)++;
-    }
-
-    fclose(file);
+    return 0; // Jika format tidak valid, kembalikan waktu 0
 }
 
-// Fungsi untuk mensimulasikan perjalanan bus tanpa total penumpang
-void simulasiPerjalanan(DataBus* bus) {
+// Fungsi untuk menampilkan waktu dalam format yang mudah dibaca
+void printTime(time_t waktu) {
+    char buffer[26];
+    struct tm* tm_info;
+
+    tm_info = localtime(&waktu);
+    strftime(buffer, 26, "%Y-%m-%d %H:%M:%S", tm_info);
+    printf("%s", buffer);
+}
+
+// Fungsi utama untuk simulasi perjalanan
+void simulasiPerjalanan(DataBus* bus, DataTiket* tiket, int tiketCount) {
     NodeRute* currentRute = bus->rute;
     int terminalCount = 0;
-    char traversalPath[512] = "";
 
     printf("Simulasi perjalanan bus ID: %s\n", bus->idBus);
-    // Mengabaikan terminal pertama
-    currentRute = currentRute->next;
 
-    // Lakukan perjalanan untuk setiap terminal dalam rute
+    // Loop untuk setiap terminal dalam rute bus
     while (currentRute != NULL) {
-        // Menambahkan terminal ke dalam traversalPath
-        if (terminalCount > 0) {
-            strcat(traversalPath, " -> ");
+
+        // Tanyakan berapa penumpang yang turun di terminal ini berdasarkan tiket
+        int penumpangTurun = 0;
+        int penumpangNaik = 0;
+
+        // Mengecek penumpang yang turun dan naik
+        for (int i = 0; i < tiketCount; i++) {
+            // Penumpang yang turun (tujuan sesuai dengan terminal saat ini)
+            if (strcmp(tiket[i].tujuan, currentRute->namaTerminal) == 0 &&
+                strcmp(tiket[i].idBus, bus->idBus) == 0 &&
+                strcmp(tiket[i].status, "aktif") == 0) {
+                penumpangTurun++;  // Hitung jumlah penumpang yang turun di terminal ini
+                // Update status tiket setelah turun
+                strcpy(tiket[i].status, "done");
+                printf("Penumpang turun: %s \n", tiket[i].namaPenumpang);
+            }
+
+            // Penumpang yang naik (awal sesuai dengan terminal saat ini)
+            if (strcmp(tiket[i].awal, currentRute->namaTerminal) == 0 &&
+                strcmp(tiket[i].idBus, bus->idBus) == 0 &&
+                strcmp(tiket[i].status, "aktif") == 0) {
+                penumpangNaik++;  // Hitung jumlah penumpang yang naik di terminal ini
+                // Update status tiket setelah naik
+                printf("Penumpang naik: %s \n", tiket[i].namaPenumpang);
+            }
         }
-        strcat(traversalPath, currentRute->namaTerminal);
-        
-        // Menanyakan berapa penumpang yang turun di terminal ini
-        int penumpang;
-        printf("Berapa banyak penumpang yang turun di terminal %s? ", currentRute->namaTerminal);
-        scanf("%d", &penumpang);
 
-        // Menampilkan proses traversal
-        printf("Proses traversal: %s\n", traversalPath);
-        printf("Bus %s berhenti di terminal %s, %d penumpang turun.\n", bus->idBus, currentRute->namaTerminal, penumpang);
+        // Menampilkan proses traversal dan penumpang naik/turun
+        printf("Bus %s berhenti di terminal %s, %d penumpang turun, %d penumpang naik.\n\n", 
+                bus->idBus, currentRute->namaTerminal, penumpangTurun, penumpangNaik);
 
-        currentRute = currentRute->next;  // Lanjutkan ke terminal berikutnya
+        // Melanjutkan ke terminal berikutnya
+        currentRute = currentRute->next; 
         terminalCount++;
     }
+
+    // Menginformasikan perjalanan selesai
     printf("Perjalanan selesai, bus mencapai tujuan akhir.\n");
 }
 
@@ -112,6 +88,12 @@ int main() {
 
     // Membaca data bus dari file
     bacaDataBus("FileManajemen/dataBus.txt", buses, &busCount);
+
+    DataTiket tiket[100]; // Array untuk menampung data tiket
+    int tiketCount = 0;
+
+    // Membaca data tiket dari file
+    bacaDataTiket("tiket.txt", tiket, &tiketCount);
 
     // Input ID bus yang ingin disimulasikan
     char idBusInput[10];
@@ -142,7 +124,7 @@ int main() {
     printf("\n");
 
     // Simulasi perjalanan bus yang dipilih
-    simulasiPerjalanan(busDipilih);
+    simulasiPerjalanan(busDipilih, tiket, tiketCount);
 
     return 0;
 }
