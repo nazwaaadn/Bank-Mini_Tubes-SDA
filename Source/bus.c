@@ -365,33 +365,33 @@ void deleteBus(char idBus[]) {
         return;
     }
 
-    char line[512];
-    char id[20], plat[30], nama[50], rute[200], kelas;
+    char line[2048];  // lebih besar karena rute bisa panjang
+    char id[20], plat[30], nama[50], rute[2000], kelas;
     int kapasitas;
     char waktuBrk[6], waktuTba[6];
+    int statusInt;
+    boolean status;
     boolean found = false;
 
     while (fgets(line, sizeof(line), file)) {
-        // Hapus newline di akhir baris
-        line[strcspn(line, "\r\n")] = '\0';
+        line[strcspn(line, "\r\n")] = '\0';  // hapus newline
 
-        int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%199[^|]|%5[^|]|%5[^|]",
-                                 id, plat, nama, &kapasitas, &kelas, rute, waktuBrk, waktuTba);
+        int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%1999[^|]|%5[^|]|%5[^|]|%d",
+                                 id, plat, nama, &kapasitas, &kelas, rute, waktuBrk, waktuTba, &statusInt);
+        status = (statusInt != 0);
 
-        if (jumlahField != 8) {
-            // Format tidak sesuai, tetap tulis
+        if (jumlahField != 9) {
+            // Format error, tetap tulis
             fprintf(temp, "%s\n", line);
             continue;
         }
 
         if (strcmp(id, idBus) == 0) {
             found = true;
-            // Lewati penulisan (baris dihapus)
-            continue;
+            continue;  // jangan tulis, artinya hapus
         }
 
-        // Tulis ulang ke file temp
-        fprintf(temp, "%s\n", line);
+        fprintf(temp, "%s\n", line);  // tulis baris normal
     }
 
     fclose(file);
@@ -509,10 +509,10 @@ void printAllBus() {
 
     char line[1024]; // buffer diperbesar untuk menampung rute panjang
     printf("===========================================================================================================================================================================\n");
-    printf("| %-6s | %-10s | %-15s | %-9s | %-5s | %-60s | %-8s | %-8s |\n",
+    printf("| %-6s | %-10s | %-15s | %-9s | %-5s | %-60s | %-8s | %-8s | %-5s |\n",
            "ID", "Plat", "Supir", "Kapasitas", "Kelas", "Rute", "Brkt", "Tiba");
     printf("===========================================================================================================================================================================\n");
-
+    
     while (fgets(line, sizeof(line), file)) {
         // Buang newline di akhir
         line[strcspn(line, "\n")] = 0;
@@ -525,15 +525,16 @@ void printAllBus() {
         char *rute = strtok(NULL, "|");
         char *keberangkatan = strtok(NULL, "|");
         char *kedatangan = strtok(NULL, "|");
+        char *status = strtok(NULL, "|");
 
-        if (!idBus || !platNomor || !namaSupir || !kapasitasStr || !kelasStr || !rute || !keberangkatan || !kedatangan) {
+        if (!idBus || !platNomor || !namaSupir || !kapasitasStr || !kelasStr || !rute || !keberangkatan || !kedatangan || !status) {
             continue; // baris tidak lengkap, skip
         }
 
         int kapasitas = atoi(kapasitasStr);
         char kelas = kelasStr[0];
 
-        printf("| %-6s | %-10s | %-15s | %-9d | %-5c | %-60s | %-8s | %-8s |\n",
+        printf("| %-6s | %-10s | %-15s | %-9d | %-5c | %-60s | %-8s | %-8s | %-5s |\n",
                idBus,
                platNomor,
                namaSupir,
@@ -541,7 +542,8 @@ void printAllBus() {
                kelas,
                rute,
                keberangkatan,
-               kedatangan);
+               kedatangan,
+               status);
         
         printf("\n");
     }

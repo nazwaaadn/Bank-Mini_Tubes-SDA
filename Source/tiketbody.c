@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "Header/user.h"
-#include "Header/tiket.h"
-#include "Header/bus.h"
-#include "Header/terminal.h"
-#include "Header/stack.h"
+#include "../Header/user.h"
+#include "../Header/tiket.h"
+#include "../Header/bus.h"
+#include "../Header/terminal.h"
+#include "../Header/stack.h"
 #include <math.h>
 #include <ctype.h>
 
@@ -204,7 +204,7 @@ void batalkanTiket(const char* idTiket) {
 }
 
 void simpanTiketKeFile(DataTiket tiket) {
-    FILE* f = fopen("tiket.txt", "a");
+    FILE* f = fopen("FileManajemen/tiket.txt", "a");
     if (!f) {
         printf("Gagal membuka file tiket.txt\n");
         return;
