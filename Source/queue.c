@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 NodeBus* AlokasiQueue(DataBus X) {
     NodeBus *P = (NodeBus *)malloc(sizeof(NodeBus));
@@ -83,13 +84,23 @@ void deQueue(Queue *Q, DataBus *X) {
 }
 
 void AntriBus(Queue *Q) {
-    // Print daftar bus
     printf("\n=== Daftar Bus yang Tersedia untuk Antri ===\n");
     printAllBus();
 
     char idBus[20];
     printf("Masukkan ID Bus yang ingin diantrikan: ");
-    scanf("%s", idBus);
+    fgets(idBus, sizeof(idBus), stdin);
+    idBus[strcspn(idBus, "\n")] = '\0';
+    // TRIM depan & belakang (gunakan utility trim yang sudah dijelaskan sebelumnya)
+    trim(idBus);
+
+
+    // Opsional: Hapus spasi depan & belakang juga
+    int start = 0;
+    while (isspace((unsigned char)idBus[start])) start++;
+    if (start > 0) memmove(idBus, idBus + start, strlen(idBus + start) + 1);
+    for (int i = strlen(idBus) - 1; i >= 0 && isspace((unsigned char)idBus[i]); --i)
+        idBus[i] = '\0';
 
     NodeBus* busNode = searchBusByID(idBus);
     if (busNode == NULL) {
@@ -105,5 +116,5 @@ void AntriBus(Queue *Q) {
 
     EnQueue(Q, busNode->Info);
     printf("Bus %s berhasil masuk ke antrian.\n", busNode->Info.idBus);
-    free(busNode); // Hanya node sementara, info sudah di-queue
+    free(busNode);
 }

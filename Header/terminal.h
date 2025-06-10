@@ -1,6 +1,6 @@
 #ifndef TERMINAL_H
 #define TERMINAL_H
-#define jml_maks 22
+#define jml_maks 21
 #define nil -1
 
 #include <stdio.h>

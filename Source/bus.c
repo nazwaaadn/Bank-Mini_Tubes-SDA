@@ -3,6 +3,7 @@
 #include "../Header/bus.h"
 #include "../Header/terminal.h"
 #include <string.h>
+#include <ctype.h>
 
 NodeBus *HeadBus = Nil;
 NodeRute *HeadRute = Nil;
@@ -35,8 +36,9 @@ NodeBus* inputDataBus(terminalTree T, int root) {
 
     // Input data dasar
     printf("Masukkan ID Bus: ");
-    scanf("%9s", busBaru->Info.idBus);
-    getchar();
+    fgets(busBaru->Info.idBus, sizeof(busBaru->Info.idBus), stdin);
+    busBaru->Info.idBus[strcspn(busBaru->Info.idBus, "\n")] = '\0';
+
 
     printf("Masukkan Plat Nomor: ");
     scanf("%14s", busBaru->Info.platNomor);
@@ -192,20 +194,34 @@ NodeBus* searchBusByID(char idBus[]) {
         return NULL;
     }
 
-    char line[512];
+    char line[1024];
     while (fgets(line, sizeof(line), file)) {
-        char id[20], plat[30], nama[50], rute[200], kelas;
+        char id[20], plat[30], nama[50], rute[500], kelas;
         int kapasitas;
-        char waktuBrk[6], waktuTba[6];
+        char waktuBrk[10], waktuTba[10], status[10];
 
         line[strcspn(line, "\r\n")] = '\0';
 
-        int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%199[^|]|%5[^|]|%5[^|]",
-                                 id, plat, nama, &kapasitas, &kelas, rute, waktuBrk, waktuTba);
+        int jumlahField = sscanf(line, "%19[^|]|%29[^|]|%49[^|]|%d|%c|%499[^|]|%9[^|]|%9[^|]|%9s",
+            id, plat, nama, &kapasitas, &kelas, rute, waktuBrk, waktuTba, status);
+        if (jumlahField != 9) continue;
 
-        if (jumlahField != 8) continue;
+        // --- Trim ID (file) dan ID input ---
+        int start = 0;
+        while (isspace((unsigned char)id[start])) start++;
+        if (start > 0) memmove(id, id + start, strlen(id + start) + 1);
+        int len = strlen(id);
+        while (len > 0 && isspace((unsigned char)id[len-1])) id[--len] = '\0';
 
-        if (strcmp(id, idBus) == 0) {
+        start = 0;
+        while (isspace((unsigned char)idBus[start])) start++;
+        char idBusTrim[20];
+        strcpy(idBusTrim, idBus + start);
+        len = strlen(idBusTrim);
+        while (len > 0 && isspace((unsigned char)idBusTrim[len-1])) idBusTrim[--len] = '\0';
+
+
+        if (strcmp(id, idBusTrim) == 0) {
             DataBus temp;
             strcpy(temp.idBus, id);
             strcpy(temp.platNomor, plat);
@@ -225,6 +241,8 @@ NodeBus* searchBusByID(char idBus[]) {
             waktu.tm_hour = jam; waktu.tm_min = menit;
             temp.kedatangan = mktime(&waktu);
 
+            temp.status = atoi(status);
+
             NodeBus* result = alokasiNodeBus(temp);
             fclose(file);
             return result;
@@ -234,6 +252,8 @@ NodeBus* searchBusByID(char idBus[]) {
     fclose(file);
     return NULL;
 }
+
+
 
 void hapusRute(NodeRute** head) {
     NodeRute* curr = *head;
@@ -371,7 +391,7 @@ void saveSingleBusToFile(DataBus bus) {
         curr = curr->next;
     }
 
-    fprintf(file, "%s|%s|%s|%d|%c|%s|%02d:%02d|%02d:%02d\n",
+        fprintf(file, "%s|%s|%s|%d|%c|%s|%02d:%02d|%02d:%02d|%d\n",
         bus.idBus,
         bus.platNomor,
         bus.namaSupir,
@@ -379,8 +399,10 @@ void saveSingleBusToFile(DataBus bus) {
         bus.kelas,
         ruteStr,
         wktBrkStruct.tm_hour, wktBrkStruct.tm_min,
-        wktTbaStruct.tm_hour, wktTbaStruct.tm_min
+        wktTbaStruct.tm_hour, wktTbaStruct.tm_min,
+        bus.status 
     );
+
 
     fclose(file);
 }
@@ -394,8 +416,8 @@ void printAllBus() {
 
     char line[1024];
     printf("===========================================================================================================================================================================\n");
-    printf("| %-6s | %-10s | %-15s | %-9s | %-5s | %-60s | %-8s | %-8s | %-5s |\n",
-           "ID", "Plat", "Supir", "Kapasitas", "Kelas", "Rute", "Brkt", "Tiba");
+    printf("| %-6s | %-10s | %-15s | %-9s | %-5s | %-60s | %-8s | %-8s | %-8s |\n",
+           "ID", "Plat", "Supir", "Kapasitas", "Kelas", "Rute", "Brkt", "Tiba", "Status");
     printf("===========================================================================================================================================================================\n");
     
     while (fgets(line, sizeof(line), file)) {
@@ -418,7 +440,7 @@ void printAllBus() {
         int kapasitas = atoi(kapasitasStr);
         char kelas = kelasStr[0];
 
-        printf("| %-6s | %-10s | %-15s | %-9d | %-5c | %-60s | %-8s | %-8s | %-5s |\n",
+        printf("| %-6s | %-10s | %-15s | %-9d | %-5c | %-60s | %-8s | %-8s | %-8s |\n",
                idBus,
                platNomor,
                namaSupir,
@@ -434,6 +456,7 @@ void printAllBus() {
     printf("===========================================================================================================================================================================\n");
     fclose(file);
 }
+
 
 boolean PreOrder(terminalTree P, address idx, char* tujuan) {
     if (idx == nil) return false;
@@ -506,7 +529,7 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
                 return true;
             }
             strcpy(newNode->namaTerminal, T[idx].info);
-            strcat(newNode->namaTerminal, " (pergi)");
+            strcat(newNode->namaTerminal, "(pergi)");
             struct tm tempWaktu = *localtime(&waktuTujuan);
             tempWaktu.tm_min -= offsetPergi;
             newNode->waktubrgkt = mktime(&tempWaktu);
@@ -522,7 +545,7 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
                     return true;
                 }
                 strcpy(balikNode->namaTerminal, T[idx].info);
-                strcat(balikNode->namaTerminal, " (pulang)");
+                strcat(balikNode->namaTerminal, "(pulang)");
                 struct tm waktuBalik = *localtime(&waktuTujuan);
                 waktuBalik.tm_min += offsetPulang;
                 balikNode->waktubrgkt = mktime(&waktuBalik);
@@ -541,4 +564,13 @@ boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute
     }
 
     return false;
+}
+
+
+void trim(char* str) {
+    int start = 0;
+    while (isspace((unsigned char)str[start])) start++;
+    if (start > 0) memmove(str, str + start, strlen(str + start) + 1);
+    int len = strlen(str);
+    while (len > 0 && isspace((unsigned char)str[len-1])) str[--len] = '\0';
 }
