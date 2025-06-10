@@ -6,11 +6,10 @@
 // Login admin
 int LoginAdmin();
 
-// Fungsi-fungsi aksi berdasarkan menu
-void LihatBusDiSetiapTerminal(Queue* q);
-void ReleaseBusDariTerminal(Queue* q);
-void TambahBusBaru();
-void LihatDataTiketPelanggan();
-void RiwayatTransaksi();
+// Fitur menu admin:
+void LihatBusDiSetiapTerminal(Queue* q);        // Lihat bus dalam antrian
+void ReleaseBusDariTerminal(Queue* q);          // Release bus (ubah status jadi 1)
+void RiwayatTransaksi();                        // Untuk fitur riwayat tiket (future)
+void updateBusStatus(const char *idBus, int statusBaru);
 
 #endif
