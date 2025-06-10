@@ -1,4 +1,5 @@
 #include "queue.h"
+#include "admin.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -115,6 +116,7 @@ void AntriBus(Queue *Q) {
     }
 
     EnQueue(Q, busNode->Info);
+    updateBusStatus(busNode->Info.idBus, 0);
     printf("Bus %s berhasil masuk ke antrian.\n", busNode->Info.idBus);
     free(busNode);
 }

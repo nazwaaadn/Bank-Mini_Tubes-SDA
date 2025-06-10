@@ -51,6 +51,8 @@ NodeRute* strToRute(char* rute);
 void printAllBus(); 
 boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** headRute, time_t waktuTu);
 boolean PreOrder(terminalTree P, address idx, char* tujuan);
+NodeBus* searchBusByID(char idBus[]);
+void saveSingleBusToFile(DataBus bus);
 
 void trim(char* str);
 
