@@ -1,0 +1,6 @@
+Bus10|tsinan|Dago|Lembang|aktif
+Bus30|Nazwa|Dago(pergi)|Punclut(pergi)|done
+Bus09|Nazwa|Cibiru(pergi)|Antapani(pulang)|aktif
+Bus30|Nazwa|Ciumbuleuit(pulang)|Dago(pulang)|done
+Bus09|Nazwa|Dago(pergi)|Gasibu(pergi)|cancelled
+Bus30|Rose|Punclut(pergi)|Dago(pulang)|done

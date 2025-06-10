@@ -44,17 +44,16 @@ NodeBus* alokasiNodeBus(DataBus busData);
 void freeBus(NodeBus* busNode);
 NodeBus* inputDataBus(terminalTree T, int root);
 void tambahRute(NodeRute** head, const char* nama);
-void inputDataBusBaru(DataBus *busBaru);
-void tampilkanDataBus(DataBus bus);
-void hapusNewline(char *str);
-NodeBus* searchBusByID(char idBus[]);
 void hapusRute(NodeRute** head);
 void deleteBus(char idBus[]);
 void ruteToString(NodeRute* rute, char* buffer, size_t bufferSize);
 NodeRute* strToRute(char* rute);
-void saveSingleBusToFile(DataBus bus);
 void printAllBus(); 
 boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** headRute, time_t waktuTu);
 boolean PreOrder(terminalTree P, address idx, char* tujuan);
+NodeBus* searchBusByID(char idBus[]);
+void saveSingleBusToFile(DataBus bus);
+
+void trim(char* str);
 
 #endif

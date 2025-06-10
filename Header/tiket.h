@@ -5,6 +5,7 @@
 #include "../Header/user.h"
 #include "../Header/bus.h"
 
+
 // Struktur Tiket
 typedef struct {
     char idTiket[20];
@@ -29,5 +30,6 @@ void bacaDataTiket(char* filename, DataTiket tiket[], int* tiketCount);
 void bacaDataBus(char* filename, DataBus buses[], int* busCount);
 void simulasiPerjalananUser(DataBus* bus, DataTiket* tiket, int tiketCount);
 const char* cariIdBusByUser(NodeUser* user, DataTiket* tiket, int tiketCount);
+void simpanDataTiketKeFile(DataTiket tiket[], int tiketCount);
 
 #endif

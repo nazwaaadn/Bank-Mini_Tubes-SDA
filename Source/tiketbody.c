@@ -155,7 +155,7 @@ void pesanTiket(NodeUser* user) {
     DataTiket tiketBaru;
     snprintf(tiketBaru.idTiket, sizeof(tiketBaru.idTiket), "TKT%ld", time(NULL));
     strcpy(tiketBaru.idBus, idBus);
-    strcpy(tiketBaru.namaPenumpang, user->Info.nama);
+    strcpy(tiketBaru.namaPenumpang, currentUser->Info.nama);
     strcpy(tiketBaru.awal, awal);  // Gunakan input terminal awal
     strcpy(tiketBaru.tujuan, tujuan);  // Gunakan input terminal tujuan
     strcpy(tiketBaru.status, "aktif");
@@ -488,6 +488,8 @@ void simulasiPerjalananUser(DataBus* buses, DataTiket* tiket, int tiketCount) {
         currentRute = currentRute->next;
     }
 
+    simpanDataTiketKeFile(tiket, tiketCount); // Simpan perubahan tiket ke file
+
     if (!userReachedDestination) {
         printf("Perjalanan selesai, bus mencapai tujuan akhir tanpa menemukan pengguna.\n");
     }
@@ -595,5 +597,28 @@ void bacaDataBus(char* filename, DataBus buses[], int* busCount) {
         (*busCount)++;
     }
 
-    fclose(file);
+   fclose(file);
+}
+
+void simpanDataTiketKeFile(DataTiket* tiket, int tiketCount) {
+    FILE* fTemp = fopen("FileManajemen/tempTiket.txt", "w");
+    if (fTemp == NULL) {
+        printf("Gagal membuka file sementara.\n");
+        return;
+    }
+
+    for (int i = 0; i < tiketCount; i++) {
+        fprintf(fTemp, "%s|%s|%s|%s|%s\n",
+                tiket[i].idBus,
+                tiket[i].namaPenumpang,
+                tiket[i].awal,
+                tiket[i].tujuan,
+                tiket[i].status);
+    }
+
+    fclose(fTemp);
+
+    // Ganti file lama dengan yang baru
+    remove("FileManajemen/tiket.txt");
+    rename("FileManajemen/tempTiket.txt", "FileManajemen/tiket.txt");
 }

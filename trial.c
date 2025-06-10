@@ -5,9 +5,6 @@
 #include <string.h>
 #include <time.h>
 
-
-
-
 // Fungsi untuk mengonversi string waktu ke struktur waktu
 time_t convertToTimeT(const char* waktuStr) {
     struct tm waktu = {0};

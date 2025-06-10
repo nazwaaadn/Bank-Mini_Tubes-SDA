@@ -12,7 +12,6 @@ NodeUser* currentUser = NULL;
 void insertUser(DataUser userBaru) {
     NodeUser* newNode = (NodeUser*)malloc(sizeof(NodeUser));
     newNode->Info = userBaru;
-    newNode->transaksi = NULL;
     newNode->next = NULL;
 
     if (HeadUser == NULL) {

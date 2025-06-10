@@ -23,7 +23,7 @@ int main() {
         scanf("%d", &pilihan); getchar();
 
         switch (pilihan) {
-            case 1: {
+            case 1: { // Manajemen Bus
                 int pilihMenuAdmin;
                 do {
                     ManajemenBus();
@@ -62,41 +62,45 @@ int main() {
                 } while (pilihMenuAdmin != 4);
                 break;
             }
-            case 2: {
+            case 2: { // Antri & Release Bus
                 int subpil;
                 do {
                     printf("\n=== ANTRI & RELEASE BUS ===\n");
-                    printf("1. Antri Bus ke Terminal\n");
-                    printf("2. Release Bus dari Terminal\n");
-                    printf("3. Kembali\n");
+                    printf("1. Lihat Bus Dalam Antrian\n");
+                    printf("2. Antri Bus ke Terminal\n");
+                    printf("3. Release Bus dari Terminal\n");
+                    printf("4. Kembali\n");
                     printf("Pilih: ");
                     scanf("%d", &subpil); getchar();
 
                     switch (subpil) {
                         case 1:
-                            AntriBus(&queueBus); // Fungsi baru: memilih bus lalu masuk queue
+                            LihatBusDiSetiapTerminal(&queueBus);
                             break;
                         case 2:
-                            ReleaseBusDariTerminal(&queueBus);
+                            AntriBus(&queueBus);
                             break;
                         case 3:
+                            ReleaseBusDariTerminal(&queueBus);
+                            break;
+                        case 4:
                             printf("Kembali ke menu utama.\n");
                             break;
                         default:
                             printf("Pilihan tidak valid.\n");
                     }
-                } while (subpil != 3);
+                } while (subpil != 4);
                 break;
             }
-            case 3:
+            case 3: // Jalur Terminal
                 {
                     terminalTree T;
                     CreateTerminal(T);
                     tampilkanTerminal(T);
                 }
                 break;
-            case 4:
-                printf("Fitur riwayat transaksi tiket belum diimplementasikan.\n");
+            case 4: // Riwayat Transaksi Tiket
+                RiwayatTransaksi();
                 break;
             case 5:
                 printf("Keluar dari menu admin...\n");
