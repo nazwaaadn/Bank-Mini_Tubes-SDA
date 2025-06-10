@@ -155,7 +155,7 @@ void pesanTiket(NodeUser* user) {
     DataTiket tiketBaru;
     snprintf(tiketBaru.idTiket, sizeof(tiketBaru.idTiket), "TKT%ld", time(NULL));
     strcpy(tiketBaru.idBus, idBus);
-    strcpy(tiketBaru.namaPenumpang, user->Info.nama);
+    strcpy(tiketBaru.namaPenumpang, currentUser->Info.nama);
     strcpy(tiketBaru.awal, awal);  // Gunakan input terminal awal
     strcpy(tiketBaru.tujuan, tujuan);  // Gunakan input terminal tujuan
     strcpy(tiketBaru.status, "aktif");
@@ -595,5 +595,5 @@ void bacaDataBus(char* filename, DataBus buses[], int* busCount) {
         (*busCount)++;
     }
 
-    fclose(file);
+   fclose(file);
 }

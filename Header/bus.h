@@ -57,4 +57,6 @@ void printAllBus();
 boolean PreOrderToLinkedList(terminalTree T, address idx, char* tujuan, NodeRute** headRute, time_t waktuTu);
 boolean PreOrder(terminalTree P, address idx, char* tujuan);
 
+void trim(char* str);
+
 #endif
